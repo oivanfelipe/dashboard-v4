@@ -352,6 +352,8 @@ const COLS = {
   roi:         /^roi$/i,
   cpl:         /^cpl$|custo.?por.?lead/i,
   cpc:         /^cpc$/i,
+  metaSem:     /^meta[\s._]?semanal/i,
+  metaMen:     /^meta[\s._]?mensal/i,
 };
 
 const METRICS = [
@@ -465,7 +467,7 @@ function parseSheetRows(values) {
       if (colMapP[key] !== colMapR[key]) obj[`_${key}_p`] = pNum(row[idx]);
     }
 
-    const hasData = ['investimento','leads','cpl','roas','vendas','faturamento','mql'].some(k => obj[`_${k}`] != null);
+    const hasData = ['investimento','leads','cpl','roas','vendas','faturamento','mql','metaSem','metaMen'].some(k => obj[`_${k}`] != null);
     if (hasData) dataRows.push(obj);
   }
 
@@ -712,8 +714,51 @@ function renderChart(rows) {
 function renderKPIs(rows) {
   const last = rows[rows.length - 1], prev = rows.length > 1 ? rows[rows.length - 2] : null;
   if (!last) { document.getElementById('kpi-row').innerHTML = ''; return; }
+
+  // Meta card (semanal ou mensal conforme viewMode)
+  const metaKey = viewMode === 'mensal' ? '_metaMen' : '_metaSem';
+  const metaLabel = viewMode === 'mensal' ? 'Meta Mensal' : 'Meta Semanal';
+  // Aggregate meta across all rows (take the most recent non-null)
+  let metaVal = null;
+  for (let i = rows.length - 1; i >= 0; i--) {
+    if (rows[i][metaKey] != null) { metaVal = rows[i][metaKey]; break; }
+  }
+
+  // Determine which metric to compare against meta (first available financial metric)
+  const compareKeys = ['leads','faturamento','vendas','investimento'];
+  let compareM = null, compareV = null;
+  for (const k of compareKeys) {
+    if (last[`_${k}`] != null) { compareM = METRICS.find(m => m.k === k); compareV = last[`_${k}`]; break; }
+  }
+
   const avail = METRICS.filter(m => last[`_${m.k}`] != null);
-  document.getElementById('kpi-row').innerHTML = avail.map(m => {
+  let metaCard = '';
+  if (metaVal != null) {
+    const pct = compareV != null ? Math.min((compareV / metaVal) * 100, 200) : null;
+    const pctDisplay = pct != null ? pct.toFixed(1) + '%' : '—';
+    const pctColor = pct == null ? 'var(--gray2)' : pct >= 100 ? 'var(--green)' : pct >= 70 ? 'var(--amber)' : '#ff4040';
+    const barW = pct != null ? Math.min(pct, 100) : 0;
+    const compareInfo = compareM ? `<div style="font-size:9px;color:var(--gray2);margin-top:3px">${compareM.l}: ${compareM.f(compareV)}</div>` : '';
+    metaCard = `<div class="kpi-card" style="grid-column:1/-1;display:flex;align-items:center;gap:20px;padding:14px 18px;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#facc15"></div>
+      <div style="flex:0 0 auto">
+        <div class="kpi-label"><span style="width:6px;height:6px;border-radius:50%;background:#facc15;display:inline-block;flex-shrink:0"></span>${metaLabel}</div>
+        <div class="kpi-value" style="font-size:22px">${fInt(metaVal)}</div>
+        ${compareInfo}
+      </div>
+      <div style="flex:1;min-width:120px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+          <span style="font-size:9px;color:var(--gray2);text-transform:uppercase;letter-spacing:.12em">Progresso</span>
+          <span style="font-size:16px;font-weight:800;font-family:'Bebas Neue',sans-serif;color:${pctColor}">${pctDisplay}</span>
+        </div>
+        <div style="height:6px;background:var(--bg4);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${barW}%;background:${pctColor};border-radius:3px;transition:width .4s ease"></div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('kpi-row').innerHTML = metaCard + avail.map(m => {
     const v = last[`_${m.k}`], p = prev?.[`_${m.k}`], vp = last[`_${m.k}_p`];
     const proj = vp != null && showProj ? `<div class="kpi-proj">Proj: ${m.f(vp)}</div>` : '';
     return `<div class="kpi-card"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:${m.col}"></div><div class="kpi-label"><span style="width:6px;height:6px;border-radius:50%;background:${m.col};display:inline-block;flex-shrink:0"></span>${m.l}</div><div class="kpi-value">${m.f(v)}</div><div class="kpi-trend">${trnd(v, p, m.lb)}</div>${proj}</div>`;
@@ -726,9 +771,12 @@ function renderKPIs(rows) {
 function renderTable(rows) {
   if (!rows.length) { document.getElementById('tbl-head').innerHTML = ''; document.getElementById('tbl-body').innerHTML = '<tr><td style="padding:20px;color:var(--gray);text-align:center">Sem dados</td></tr>'; return; }
   const avail = getAvailMetrics(rows);
-  document.getElementById('tbl-head').innerHTML = `<tr><th>Período</th>${avail.map(m => `<th>${m.l}</th>`).join('')}${showProj ? avail.filter(m => rows.some(r => r[`_${m.k}_p`] != null)).map(m => `<th>${m.l} Proj.</th>`).join('') : ''}</tr>`;
+  const metaKey = viewMode === 'mensal' ? '_metaMen' : '_metaSem';
+  const hasMeta = rows.some(r => r[metaKey] != null);
+  const metaLbl = viewMode === 'mensal' ? 'Meta Men.' : 'Meta Sem.';
+  document.getElementById('tbl-head').innerHTML = `<tr><th>Período</th>${avail.map(m => `<th>${m.l}</th>`).join('')}${hasMeta ? `<th style="color:#facc15">${metaLbl}</th>` : ''}${showProj ? avail.filter(m => rows.some(r => r[`_${m.k}_p`] != null)).map(m => `<th>${m.l} Proj.</th>`).join('') : ''}</tr>`;
   document.getElementById('tbl-body').innerHTML = [...rows].reverse().map((row, i) =>
-    `<tr class="${i === 0 ? 'hi' : ''}"><td>${row._week}</td>${avail.map(m => `<td>${m.f(row['_' + m.k])}</td>`).join('')}${showProj ? avail.filter(m => rows.some(r => r[`_${m.k}_p`] != null)).map(m => `<td style="color:#a78bfa">${m.f(row['_' + m.k + '_p'])}</td>`).join('') : ''}</tr>`
+    `<tr class="${i === 0 ? 'hi' : ''}"><td>${row._week}</td>${avail.map(m => `<td>${m.f(row['_' + m.k])}</td>`).join('')}${hasMeta ? `<td style="color:#facc15;font-weight:600">${fInt(row[metaKey])}</td>` : ''}${showProj ? avail.filter(m => rows.some(r => r[`_${m.k}_p`] != null)).map(m => `<td style="color:#a78bfa">${m.f(row['_' + m.k + '_p'])}</td>`).join('') : ''}</tr>`
   ).join('');
 }
 
@@ -859,15 +907,19 @@ function fmtForAI(rows) {
   if (!rows.length) return 'Nenhum dado disponível.';
   const avail = getAvailMetrics(rows);
   const last = rows[rows.length - 1], prev = rows.length > 1 ? rows[rows.length - 2] : null;
+  const metaKey = viewMode === 'mensal' ? '_metaMen' : '_metaSem';
+  let metaVal = null;
+  for (let i = rows.length - 1; i >= 0; i--) { if (rows[i][metaKey] != null) { metaVal = rows[i][metaKey]; break; } }
   const summary = avail.map(m => {
     const v = last[`_${m.k}`], p = prev?.[`_${m.k}`];
     if (v == null) return null;
     const delta = p && p !== 0 ? ((v - p) / p * 100).toFixed(1) + '%' : null;
     return `${m.l}: ${m.f(v)}${delta ? ` (${Number(delta) > 0 ? '+' : ''}${delta} vs anterior)` : ''}`;
   }).filter(Boolean);
-  const header = 'Período | ' + avail.map(m => m.l).join(' | ');
-  const sample = rows.slice(-12).map(r => [r._week, ...avail.map(m => m.f(r[`_${m.k}`]))].join(' | '));
-  return `Última semana:\n${summary.join('\n')}\n\nHistórico (últimas ${sample.length} semanas):\n${header}\n${sample.join('\n')}`;
+  const metaLine = metaVal != null ? `Meta ${viewMode === 'mensal' ? 'Mensal' : 'Semanal'} Geral: ${fInt(metaVal)}` : null;
+  const header = 'Período | ' + avail.map(m => m.l).join(' | ') + (metaVal != null ? ' | Meta' : '');
+  const sample = rows.slice(-12).map(r => [r._week, ...avail.map(m => m.f(r[`_${m.k}`])), ...(metaVal != null ? [fInt(r[metaKey])] : [])].join(' | '));
+  return `Última semana:\n${summary.join('\n')}${metaLine ? '\n' + metaLine : ''}\n\nHistórico (últimas ${sample.length} semanas):\n${header}\n${sample.join('\n')}`;
 }
 
 async function sendChat() {

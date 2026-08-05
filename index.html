@@ -37,11 +37,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 .add-b:hover{background:var(--red-deep);}
 
 /* MAIN */
-.main{flex:1;margin-left:220px;min-height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+.main{flex:1;margin-left:220px;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
 
 /* OVERVIEW */
-.ov-view{display:none;flex:1;overflow-y:auto;padding:28px 28px 100px;}
-.ov-view.show{display:block;}
+.ov-view{display:none;flex:1;overflow-y:auto;padding:28px 28px 100px;min-height:0;}
+.ov-view.show{display:flex;flex-direction:column;}
 .ov-hd{margin-bottom:24px;}
 .ov-hd-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.04em;}
 .ov-hd-sub{font-size:11px;color:var(--gray);letter-spacing:.12em;text-transform:uppercase;margin-top:4px;}
@@ -99,7 +99,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 .ref-btn:hover{color:var(--white);}
 
 /* DETAIL BODY */
-.dv-body{flex:1;overflow-y:auto;padding:20px 24px 120px;}
+.dv-body{flex:1;overflow-y:auto;padding:20px 24px 120px;min-height:0;}
 .mpills-wrap{margin-bottom:16px;}
 .mpills-label{font-size:9px;font-weight:700;color:var(--gray2);text-transform:uppercase;letter-spacing:.2em;margin-bottom:8px;}
 .mpills{display:flex;flex-wrap:wrap;gap:5px;}
@@ -234,10 +234,6 @@ tr.hi td{color:var(--white);font-weight:700;background:var(--red-soft);}
     <button class="back-btn" onclick="showOverview()">← Voltar</button>
     <div class="topbar-sep"></div>
     <span class="dv-title" id="dv-title"></span>
-    <div class="mode-tgl">
-      <button class="mt-btn ac" id="mt-sem" onclick="setViewMode('semana')">Semana</button>
-      <button class="mt-btn"    id="mt-men" onclick="setViewMode('mensal')">Mês</button>
-    </div>
     <div class="ch-tabs">
       <div class="ch-tab ac" data-ch="geral"  onclick="setChannel('geral',this)">Geral</div>
       <div class="ch-tab"    data-ch="meta"   onclick="setChannel('meta',this)">Meta</div>
@@ -358,18 +354,18 @@ const COLS = {
 };
 
 const METRICS = [
-  {k:'investimento', l:'Investimento', f:fCurr, lb:false, col:'#818cf8'},
-  {k:'leads',        l:'Leads',        f:fInt,  lb:false, col:'#34d399'},
-  {k:'cpl',          l:'CPL',          f:fCurr, lb:true,  col:'#fb923c'},
-  {k:'roas',         l:'ROAS',         f:fRoas, lb:false, col:'#a78bfa'},
-  {k:'mql',          l:'MQL',          f:fInt,  lb:false, col:'#fbbf24'},
-  {k:'sql',          l:'SQL',          f:fInt,  lb:false, col:'#60a5fa'},
-  {k:'vendas',       l:'Vendas',       f:fInt,  lb:false, col:'#22d3ee'},
-  {k:'faturamento',  l:'Faturamento',  f:fCurr, lb:false, col:'#86efac'},
-  {k:'roi',          l:'ROI',          f:fPct,  lb:false, col:'#c084fc'},
-  {k:'alcance',      l:'Alcance',      f:fInt,  lb:false, col:'#94a3b8'},
-  {k:'cliques',      l:'Cliques',      f:fInt,  lb:false, col:'#38bdf8'},
-  {k:'cpc',          l:'CPC',          f:fCurr, lb:true,  col:'#f97316'},
+  {k:'investimento', l:'Investimento', f:fCurr, lb:false, col:'#6366f1'},  // indigo
+  {k:'leads',        l:'Leads',        f:fInt,  lb:false, col:'#10b981'},  // emerald
+  {k:'cpl',          l:'CPL',          f:fCurr, lb:true,  col:'#f59e0b'},  // amber
+  {k:'roas',         l:'ROAS',         f:fRoas, lb:false, col:'#0ea5e9'},  // sky blue
+  {k:'mql',          l:'MQL',          f:fInt,  lb:false, col:'#ec4899'},  // pink
+  {k:'sql',          l:'SQL',          f:fInt,  lb:false, col:'#14b8a6'},  // teal
+  {k:'vendas',       l:'Vendas',       f:fInt,  lb:false, col:'#84cc16'},  // lime
+  {k:'faturamento',  l:'Faturamento',  f:fCurr, lb:false, col:'#f97316'},  // orange
+  {k:'roi',          l:'ROI',          f:fPct,  lb:false, col:'#c084fc'},  // purple
+  {k:'alcance',      l:'Alcance',      f:fInt,  lb:false, col:'#94a3b8'},  // slate
+  {k:'cliques',      l:'Cliques',      f:fInt,  lb:false, col:'#06b6d4'},  // cyan
+  {k:'cpc',          l:'CPC',          f:fCurr, lb:true,  col:'#d946ef'},  // fuchsia
 ];
 
 // ══════════════════════════════════════════
@@ -633,19 +629,80 @@ function renderChart(rows) {
   if (!rows.length) { box.innerHTML = '<div class="no-data">Sem dados para o período</div>'; return; }
   if (!box.querySelector('canvas')) box.innerHTML = '<canvas id="main-chart"></canvas>';
   const ctx = document.getElementById('main-chart').getContext('2d');
-  const labels = rows.map(r => r._week), datasets = [];
-  for (const key of [...activeMetrics]) {
+  const labels = rows.map(r => r._week);
+
+  // Compute per-metric max to detect scale divergence
+  const keys = [...activeMetrics];
+  const metaMap = {};
+  for (const key of keys) {
     const m = METRICS.find(x => x.k === key); if (!m) continue;
-    const data = rows.map(r => r[`_${key}`]); if (!data.some(v => v != null)) continue;
-    datasets.push({ label: m.l, data, borderColor: m.col, backgroundColor: m.col + '18', tension: .4, fill: activeMetrics.size === 1, pointRadius: 3, pointHoverRadius: 5, borderWidth: 2 });
-    if (showProj) { const dp = rows.map(r => r[`_${key}_p`]); if (dp.some(v => v != null)) datasets.push({ label: m.l + ' Proj.', data: dp, borderColor: m.col, borderDash: [5, 4], tension: .4, fill: false, pointRadius: 2, borderWidth: 1.5, pointStyle: 'triangle' }); }
+    const vals = rows.map(r => r[`_${key}`]).filter(v => v != null);
+    if (!vals.length) continue;
+    const mx = Math.max(...vals.map(Math.abs)) || 1;
+    metaMap[key] = { m, mx, vals };
   }
-  if (!datasets.length) return;
+  const validKeys = Object.keys(metaMap);
+  if (!validKeys.length) return;
+
+  // Normalize when scales differ by more than 10×
+  const maxOfMaxes = Math.max(...validKeys.map(k => metaMap[k].mx));
+  const minOfMaxes = Math.min(...validKeys.map(k => metaMap[k].mx));
+  const needsNorm  = validKeys.length > 1 && (maxOfMaxes / minOfMaxes) > 10;
+
+  const datasets = [];
+  for (const key of validKeys) {
+    const { m, mx } = metaMap[key];
+    const rawData = rows.map(r => r[`_${key}`]);
+    const chartData = needsNorm
+      ? rawData.map(v => v == null ? null : (v / mx) * 100)
+      : rawData;
+    datasets.push({
+      label: m.l, data: chartData,
+      borderColor: m.col, backgroundColor: m.col + '18',
+      tension: .4, fill: activeMetrics.size === 1,
+      pointRadius: 3, pointHoverRadius: 5, borderWidth: 2,
+      _raw: rawData, _fmt: m.f, _norm: needsNorm,
+    });
+    if (showProj) {
+      const dp = rows.map(r => r[`_${key}_p`]);
+      if (dp.some(v => v != null)) {
+        const dpChart = needsNorm ? dp.map(v => v == null ? null : (v / mx) * 100) : dp;
+        datasets.push({ label: m.l + ' Proj.', data: dpChart, borderColor: m.col, borderDash: [5,4], tension: .4, fill: false, pointRadius: 2, borderWidth: 1.5, pointStyle: 'triangle', _raw: dp, _fmt: m.f, _norm: needsNorm });
+      }
+    }
+  }
+
   mainChart = new Chart(ctx, { type: 'line', data: { labels, datasets }, options: {
     responsive: true, maintainAspectRatio: false,
     interaction: { mode: 'index', intersect: false },
-    plugins: { legend: { position: 'top', labels: { font: { size: 10 }, padding: 12, usePointStyle: true } }, tooltip: { backgroundColor: '#1f1f1f', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1, titleColor: '#fff', bodyColor: '#b8b8b8', callbacks: { label(c) { const m = METRICS.find(x => x.l === c.dataset.label || c.dataset.label.startsWith(x.l)); return ` ${c.dataset.label}: ${m ? m.f(c.raw) : c.raw}`; } } } },
-    scales: { x: { ticks: { font: { size: 9 }, maxRotation: 35, maxTicksLimit: 16, color: '#6b6b6b' }, grid: { color: 'rgba(255,255,255,.04)' } }, y: { ticks: { font: { size: 9 }, color: '#6b6b6b', callback: v => Math.abs(v) >= 1000 ? (v / 1000).toFixed(0) + 'k' : v }, grid: { color: 'rgba(255,255,255,.05)' } } }
+    plugins: {
+      legend: { position: 'top', labels: { font: { size: 10 }, padding: 12, usePointStyle: true } },
+      tooltip: {
+        backgroundColor: '#1f1f1f', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
+        titleColor: '#fff', bodyColor: '#b8b8b8',
+        callbacks: {
+          label(c) {
+            const raw = c.dataset._raw?.[c.dataIndex];
+            const fmt = c.dataset._fmt;
+            const v = raw != null && fmt ? fmt(raw) : c.raw;
+            return ` ${c.dataset.label}: ${v}`;
+          },
+          afterTitle: needsNorm ? () => '(normalizado — escala relativa)' : undefined,
+        }
+      }
+    },
+    scales: {
+      x: { ticks: { font: { size: 9 }, maxRotation: 35, maxTicksLimit: 16, color: '#6b6b6b' }, grid: { color: 'rgba(255,255,255,.04)' } },
+      y: {
+        ticks: {
+          font: { size: 9 }, color: '#6b6b6b',
+          callback: needsNorm
+            ? v => v.toFixed(0) + '%'
+            : v => Math.abs(v) >= 1000 ? (v/1000).toFixed(0)+'k' : v
+        },
+        grid: { color: 'rgba(255,255,255,.05)' }
+      }
+    }
   }});
 }
 
@@ -710,8 +767,6 @@ function renderDetail(id) {
   document.getElementById('ov-view').classList.remove('show');
   document.getElementById('dv-wrap').classList.add('show');
   document.getElementById('dv-title').textContent = c.name;
-  document.getElementById('mt-sem').classList.toggle('ac', viewMode === 'semana');
-  document.getElementById('mt-men').classList.toggle('ac', viewMode === 'mensal');
   document.querySelectorAll('.ch-tab').forEach(t => t.classList.toggle('ac', t.dataset.ch === channel));
   document.getElementById('proj-btn').classList.toggle('ac', showProj);
   updateChatCtx();
@@ -720,9 +775,8 @@ function renderDetail(id) {
   populateWkSelects();
   const rows = getActiveRows();
   const chLabel = { geral: 'Geral · Todos os canais', meta: 'Meta Ads', google: 'Google Ads' };
-  const mLabel  = { semana: 'semanal', mensal: 'mensal' };
-  document.getElementById('chart-ttl').textContent = `Evolução ${mLabel[viewMode]} · ${chLabel[channel]}`;
-  document.getElementById('chart-sub').textContent = `${rows.length} períodos · Última: ${rows[rows.length - 1]?._week || '—'}`;
+  document.getElementById('chart-ttl').textContent = `Evolução semanal · ${chLabel[channel]}`;
+  document.getElementById('chart-sub').textContent = `${rows.length} semanas · Última: ${rows[rows.length - 1]?._week || '—'}`;
   buildPills(rows); renderKPIs(rows); renderTable(rows); scheduleChart();
 }
 function refreshDetail() { if (activeId && cdata[activeId]) renderDetail(activeId); }
@@ -755,13 +809,44 @@ function toggleChat() {
   if (chatOpen) updateChatCtx();
 }
 
+const SUGS_OV = [
+  'Qual cliente tem melhor ROAS?',
+  'Compare o CPL entre os clientes.',
+  'Quem tem mais leads essa semana?',
+  'Qual cliente está com pior performance?',
+];
+
 function updateChatCtx() {
-  if (!activeId) { document.getElementById('chat-ctx').textContent = 'Selecione um cliente'; return; }
+  if (!activeId) {
+    document.getElementById('chat-ctx').textContent = `Visão Geral · ${clients.length} clientes`;
+    document.getElementById('chat-sugs').innerHTML = SUGS_OV.slice(0, 4).map(s => `<div class="sug-chip" onclick="useSug('${s.replace(/'/g,"\\'")}')">${s}</div>`).join('');
+    return;
+  }
   const c = clients.find(x => x.id === activeId);
   const rows = getActiveRows();
   const chLabel = { geral: 'Geral', meta: 'Meta Ads', google: 'Google Ads' };
   document.getElementById('chat-ctx').textContent = `${c?.name || '—'} · ${chLabel[channel]} · ${rows.length} períodos`;
   document.getElementById('chat-sugs').innerHTML = SUGS.slice(0, 4).map(s => `<div class="sug-chip" onclick="useSug('${s.replace(/'/g,"\\'")}')">${s}</div>`).join('');
+}
+
+function fmtForAIOverview() {
+  if (!clients.length) return 'Nenhum cliente configurado.';
+  const lines = [];
+  for (const c of clients) {
+    const d = cdata[c.id];
+    if (!d || d.error) { lines.push(`${c.name}: sem dados (${d?.error || 'carregando'})`); continue; }
+    const rows = d.semana?.geral?.rows || [];
+    const last = rows[rows.length - 1], prev = rows.length > 1 ? rows[rows.length - 2] : null;
+    if (!last) { lines.push(`${c.name}: sem dados`); continue; }
+    const avail = METRICS.filter(m => last[`_${m.k}`] != null);
+    const summary = avail.map(m => {
+      const v = last[`_${m.k}`], p = prev?.[`_${m.k}`];
+      const delta = p && p !== 0 ? ` (${((v-p)/p*100).toFixed(1)}%)` : '';
+      return `${m.l}: ${m.f(v)}${delta}`;
+    }).join(' | ');
+    lines.push(`${c.name} (${last._week}): ${summary}`);
+  }
+  return lines.join('\n');
 }
 
 function useSug(text) { document.getElementById('chat-input').value = text; sendChat(); }
@@ -785,9 +870,7 @@ function fmtForAI(rows) {
 async function sendChat() {
   const input = document.getElementById('chat-input');
   const question = input.value.trim();
-  if (!question || !activeId) return;
-  const c = clients.find(x => x.id === activeId);
-  const rows = getActiveRows();
+  if (!question) return;
   addChatMsg('user', question);
   input.value = '';
   document.getElementById('chat-send').disabled = true;
@@ -797,16 +880,29 @@ async function sendChat() {
   msgsEl.scrollTop = msgsEl.scrollHeight;
 
   try {
-    const chLabel = { geral: 'Geral (todos os canais)', meta: 'Meta Ads', google: 'Google Ads' };
-    const mLabel  = { semana: 'semanal', mensal: 'mensal' };
-    const ctx = fmtForAI(rows);
-    const prompt = `Você é um analista sênior de tráfego pago da V4 Company, especialista em diagnóstico de performance e otimização de mídia paga. Seja direto, objetivo e baseado em dados. Foque em insights acionáveis.
+    let prompt;
+    if (!activeId) {
+      // Overview: consolidate all clients
+      const ctx = fmtForAIOverview();
+      prompt = `Você é um analista sênior de tráfego pago da V4 Company. Analise a performance consolidada de múltiplos clientes e responda de forma direta e objetiva com base nos dados.
+
+DADOS DOS CLIENTES (última semana disponível):
+${ctx}
+
+PERGUNTA: ${question}
+
+Responda em português, de forma concisa. Compare clientes quando relevante. Máximo 250 palavras.`;
+    } else {
+      const c = clients.find(x => x.id === activeId);
+      const rows = getActiveRows();
+      const chLabel = { geral: 'Geral (todos os canais)', meta: 'Meta Ads', google: 'Google Ads' };
+      const ctx = fmtForAI(rows);
+      prompt = `Você é um analista sênior de tráfego pago da V4 Company, especialista em diagnóstico de performance e otimização de mídia paga. Seja direto, objetivo e baseado em dados. Foque em insights acionáveis.
 
 CONTEXTO:
 - Cliente: ${c?.name}
 - Canal: ${chLabel[channel]}
-- Granularidade: ${mLabel[viewMode]}
-- Período: ${rows.length} ${viewMode === 'semana' ? 'semanas' : 'meses'} (${rows[0]?._week || '?'} a ${rows[rows.length - 1]?._week || '?'})
+- Período: ${rows.length} semanas (${rows[0]?._week || '?'} a ${rows[rows.length - 1]?._week || '?'})
 
 DADOS:
 ${ctx}
@@ -814,6 +910,7 @@ ${ctx}
 PERGUNTA: ${question}
 
 Responda em português, de forma concisa. Use dados concretos. Máximo 200 palavras.`;
+    }
 
     const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
     const data = await r.json();

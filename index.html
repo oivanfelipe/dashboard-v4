@@ -377,7 +377,8 @@ const METRICS = [
 // ══════════════════════════════════════════
 let clients = [];
 let cdata   = {};
-let sbUrl   = '', sbKey = '';
+let sbUrl   = 'https://mzwynanvhojzyoirvxkc.supabase.co';
+let sbKey   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16d3luYW52aG9qenlvaXJ2eGtjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5Mjc3NjEsImV4cCI6MjEwMTUwMzc2MX0.UniVWAVDJgyHo8QGlqXjMeTBulsjEDdZ5nyBWowYO2s';
 let view    = 'overview', activeId = null, editId = null;
 let channel = 'geral', viewMode = 'semana';
 let wkFrom  = null, wkTo = null, wkPreset = 0;
@@ -899,19 +900,7 @@ document.getElementById('modal-ov').addEventListener('click', e => { if (e.targe
 // ══════════════════════════════════════════
 async function init() {
   render();
-  // Load Supabase config from API
-  try {
-    const r = await fetch('/api/config');
-    if (r.ok) {
-      const cfg = await r.json();
-      sbUrl = cfg.supabaseUrl || '';
-      sbKey = cfg.supabaseKey || '';
-    }
-  } catch (e) {
-    console.warn('Config load failed:', e.message);
-  }
-
-  // Load clients from Supabase
+  // Load clients from Supabase (sbUrl/sbKey already set as constants above)
   await loadClientsFromSupabase();
   render();
 

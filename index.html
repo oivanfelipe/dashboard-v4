@@ -234,6 +234,10 @@ tr.hi td{color:var(--white);font-weight:700;background:var(--red-soft);}
     <button class="back-btn" onclick="showOverview()">← Voltar</button>
     <div class="topbar-sep"></div>
     <span class="dv-title" id="dv-title"></span>
+    <div class="mode-tgl">
+      <button class="mt-btn ac" id="mt-sem" onclick="setViewMode('semana')">Semana</button>
+      <button class="mt-btn"    id="mt-men" onclick="setViewMode('mensal')">Mês</button>
+    </div>
     <div class="ch-tabs">
       <div class="ch-tab ac" data-ch="geral"  onclick="setChannel('geral',this)">Geral</div>
       <div class="ch-tab"    data-ch="meta"   onclick="setChannel('meta',this)">Meta</div>
@@ -247,9 +251,6 @@ tr.hi td{color:var(--white);font-weight:700;background:var(--red-soft);}
         <div class="wf-btn"    onclick="setPeriod(13,this)">13</div>
         <div class="wf-btn ac" onclick="setPeriod(0,this)">Tudo</div>
       </div>
-      <select class="wf-sel" id="wk-from" onchange="onRangeChange()"></select>
-      <span style="color:var(--gray2);font-size:10px">–</span>
-      <select class="wf-sel" id="wk-to"   onchange="onRangeChange()"></select>
       <button class="proj-btn" id="proj-btn" onclick="toggleProjected(this)">⬡ Projetado</button>
     </div>
     <button class="ref-btn" onclick="refreshCurrent()" title="Atualizar">↻</button>
@@ -767,6 +768,8 @@ function renderDetail(id) {
   document.getElementById('ov-view').classList.remove('show');
   document.getElementById('dv-wrap').classList.add('show');
   document.getElementById('dv-title').textContent = c.name;
+  document.getElementById('mt-sem').classList.toggle('ac', viewMode === 'semana');
+  document.getElementById('mt-men').classList.toggle('ac', viewMode === 'mensal');
   document.querySelectorAll('.ch-tab').forEach(t => t.classList.toggle('ac', t.dataset.ch === channel));
   document.getElementById('proj-btn').classList.toggle('ac', showProj);
   updateChatCtx();
@@ -775,8 +778,9 @@ function renderDetail(id) {
   populateWkSelects();
   const rows = getActiveRows();
   const chLabel = { geral: 'Geral · Todos os canais', meta: 'Meta Ads', google: 'Google Ads' };
-  document.getElementById('chart-ttl').textContent = `Evolução semanal · ${chLabel[channel]}`;
-  document.getElementById('chart-sub').textContent = `${rows.length} semanas · Última: ${rows[rows.length - 1]?._week || '—'}`;
+  const mLabel  = { semana: 'semanal', mensal: 'mensal' };
+  document.getElementById('chart-ttl').textContent = `Evolução ${mLabel[viewMode]} · ${chLabel[channel]}`;
+  document.getElementById('chart-sub').textContent = `${rows.length} períodos · Última: ${rows[rows.length - 1]?._week || '—'}`;
   buildPills(rows); renderKPIs(rows); renderTable(rows); scheduleChart();
 }
 function refreshDetail() { if (activeId && cdata[activeId]) renderDetail(activeId); }

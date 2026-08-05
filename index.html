@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>V4 · Dashboard Tráfego Pago</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
+<style>
+:root{
+  --bg:#0a0a0a; --bg2:#111111; --bg3:#181818; --bg4:#1f1f1f;
+  --red:#e10600; --red-deep:#a30400; --red-glow:rgba(225,6,0,.25); --red-soft:rgba(225,6,0,.08);
+  --white:#ffffff; --gray:#9a9a9a; --gray2:#5a5a5a;
+  --green:#19c37d; --amber:#ffb020;
+  --text2:#b8b8b8; --text3:#6b6b6b;
+  --border:rgba(255,255,255,.07); --border2:rgba(255,255,255,.14);
+  --meta:#1877F2; --google:#EA4335;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;display:flex;font-size:14px;overflow:hidden;}
+
+/* SIDEBAR */
+.sb{width:220px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;z-index:50;}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);}
+.sb-logo-v4{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--red);letter-spacing:.1em;line-height:1;}
+.sb-logo-sub{font-size:10px;color:var(--gray);letter-spacing:.18em;text-transform:uppercase;margin-top:3px;}
+.sb-section{font-size:9px;font-weight:700;color:var(--gray2);text-transform:uppercase;letter-spacing:.2em;padding:16px 18px 6px;}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 18px;cursor:pointer;font-size:12px;color:var(--gray);transition:color .15s,background .15s;border-left:2px solid transparent;user-select:none;}
+.ni:hover{color:var(--white);background:rgba(255,255,255,.04);}
+.ni.ac{color:var(--white);border-left-color:var(--red);background:rgba(225,6,0,.08);}
+.ni-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.ni-dot.ok{background:var(--green);}.ni-dot.er{background:var(--red);}.ni-dot.ld{background:var(--amber);animation:pu 1s infinite;}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
+.ni-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sb-footer{margin-top:auto;padding:14px 18px;}
+.add-b{width:100%;padding:9px 0;background:var(--red);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .15s;}
+.add-b:hover{background:var(--red-deep);}
+
+/* MAIN */
+.main{flex:1;margin-left:220px;min-height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+/* OVERVIEW */
+.ov-view{display:none;flex:1;overflow-y:auto;padding:28px 28px 100px;}
+.ov-view.show{display:block;}
+.ov-hd{margin-bottom:24px;}
+.ov-hd-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.04em;}
+.ov-hd-sub{font-size:11px;color:var(--gray);letter-spacing:.12em;text-transform:uppercase;margin-top:4px;}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;}
+.cl-card{background:var(--bg2);border:1px solid var(--border);border-top:2px solid var(--red);border-radius:6px;padding:20px;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
+.cl-card:hover{border-color:rgba(255,255,255,.18);box-shadow:0 8px 40px rgba(0,0,0,.4);}
+.cl-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.cl-card-name{font-size:16px;font-weight:800;}
+.cl-card-sub{font-size:10px;color:var(--gray);letter-spacing:.1em;text-transform:uppercase;margin-top:3px;}
+.badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:3px;letter-spacing:.08em;text-transform:uppercase;}
+.b-ok{background:rgba(25,195,125,.15);color:var(--green);border:1px solid rgba(25,195,125,.3);}
+.b-er{background:rgba(225,6,0,.15);color:#ff4040;border:1px solid rgba(225,6,0,.3);}
+.b-ld{background:rgba(255,176,32,.12);color:var(--amber);border:1px solid rgba(255,176,32,.25);}
+.mtr-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.mtr{padding:10px;background:var(--bg3);border-radius:4px;}
+.mtr-l{font-size:8px;font-weight:700;color:var(--gray2);text-transform:uppercase;letter-spacing:.15em;margin-bottom:4px;display:flex;align-items:center;gap:4px;}
+.mtr-v{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--white);letter-spacing:.03em;line-height:1;}
+.mtr-t{font-size:9px;font-weight:600;margin-top:3px;}
+.up{color:var(--green);}.dn{color:var(--red);}.nt{color:var(--gray2);}
+.empty-state{text-align:center;padding:80px 20px;color:var(--gray);}
+.empty-state-icon{font-size:48px;margin-bottom:16px;opacity:.4;}
+.empty-state h3{font-size:20px;font-weight:800;color:var(--white);margin-bottom:8px;}
+.empty-state p{font-size:13px;line-height:1.6;}
+
+/* DETAIL */
+.dv-wrap{display:none;flex:1;flex-direction:column;height:100vh;overflow:hidden;}
+.dv-wrap.show{display:flex;}
+
+/* TOP BAR */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;gap:12px;height:52px;flex-shrink:0;flex-wrap:wrap;}
+.back-btn{background:none;border:none;font-size:11px;font-weight:700;color:var(--gray);cursor:pointer;letter-spacing:.08em;text-transform:uppercase;padding:5px 0;display:flex;align-items:center;gap:5px;transition:color .15s;}
+.back-btn:hover{color:var(--white);}
+.topbar-sep{width:1px;height:18px;background:var(--border2);flex-shrink:0;}
+.dv-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.06em;}
+.mode-tgl{display:flex;border:1px solid var(--border2);border-radius:4px;overflow:hidden;}
+.mt-btn{padding:4px 12px;font-size:10px;font-weight:700;cursor:pointer;color:var(--gray);background:transparent;border:none;font-family:'Inter',sans-serif;letter-spacing:.08em;text-transform:uppercase;transition:all .15s;}
+.mt-btn.ac{background:var(--red);color:#fff;}
+.ch-tabs{display:flex;gap:4px;}
+.ch-tab{padding:4px 12px;border-radius:3px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--gray);letter-spacing:.08em;text-transform:uppercase;transition:all .15s;}
+.ch-tab:hover{color:var(--white);}
+.ch-tab.ac{border-color:transparent;color:#fff;}
+.ch-tab.ac[data-ch=geral]{background:var(--red);}
+.ch-tab.ac[data-ch=meta]{background:var(--meta);}
+.ch-tab.ac[data-ch=google]{background:var(--google);}
+.fbar{display:flex;align-items:center;gap:6px;margin-left:auto;}
+.fbar-lbl{font-size:9px;font-weight:700;color:var(--gray2);text-transform:uppercase;letter-spacing:.15em;}
+.wf-btns{display:flex;gap:2px;}
+.wf-btn{padding:3px 8px;border-radius:3px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--gray);letter-spacing:.05em;transition:all .15s;}
+.wf-btn:hover{color:var(--white);}
+.wf-btn.ac{background:var(--red);color:#fff;border-color:var(--red);}
+.wf-sel{padding:3px 7px;border:1px solid var(--border2);border-radius:3px;font-size:10px;color:var(--white);background:var(--bg3);cursor:pointer;font-family:'Inter',sans-serif;}
+.proj-btn{padding:4px 10px;border-radius:3px;border:1px solid var(--border2);font-size:10px;font-weight:700;cursor:pointer;color:var(--gray);background:transparent;letter-spacing:.06em;text-transform:uppercase;transition:all .15s;white-space:nowrap;}
+.proj-btn.ac{background:rgba(100,50,220,.25);color:#a78bfa;border-color:#7c3aed;}
+.ref-btn{padding:4px 10px;border:1px solid var(--border2);border-radius:3px;font-size:12px;cursor:pointer;color:var(--gray);background:transparent;transition:all .15s;}
+.ref-btn:hover{color:var(--white);}
+
+/* DETAIL BODY */
+.dv-body{flex:1;overflow-y:auto;padding:20px 24px 120px;}
+.mpills-wrap{margin-bottom:16px;}
+.mpills-label{font-size:9px;font-weight:700;color:var(--gray2);text-transform:uppercase;letter-spacing:.2em;margin-bottom:8px;}
+.mpills{display:flex;flex-wrap:wrap;gap:5px;}
+.mpill{padding:4px 12px;border-radius:3px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid;letter-spacing:.06em;text-transform:uppercase;transition:all .15s;user-select:none;}
+
+/* KPI row */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:16px;}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:14px 16px;position:relative;overflow:hidden;}
+.kpi-label{font-size:8px;font-weight:700;color:var(--gray2);text-transform:uppercase;letter-spacing:.2em;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.kpi-value{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:.03em;line-height:1;color:var(--white);}
+.kpi-trend{font-size:9px;font-weight:700;margin-top:4px;}
+.kpi-proj{font-size:9px;color:#a78bfa;margin-top:2px;font-style:italic;}
+
+/* Chart */
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:18px;margin-bottom:14px;}
+.chart-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.chart-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;}
+.chart-sub{font-size:10px;color:var(--gray);margin-top:3px;}
+.chart-box{position:relative;height:200px;}
+.no-data{display:flex;align-items:center;justify-content:center;height:100%;color:var(--gray);font-size:12px;}
+
+/* Table */
+.tbl-card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;overflow:auto;}
+table{width:100%;border-collapse:collapse;font-size:11px;}
+th{padding:8px 12px;text-align:left;font-size:8px;font-weight:700;color:var(--gray2);text-transform:uppercase;letter-spacing:.18em;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--bg3);position:sticky;top:0;}
+td{padding:8px 12px;border-bottom:1px solid var(--border);white-space:nowrap;color:var(--text2);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.03);color:var(--white);}
+tr.hi td{color:var(--white);font-weight:700;background:var(--red-soft);}
+
+/* CHAT */
+.chat-toggle{position:fixed;bottom:24px;right:24px;z-index:100;width:48px;height:48px;border-radius:50%;background:var(--red);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 24px var(--red-glow);transition:transform .15s;}
+.chat-toggle:hover{transform:scale(1.08);}
+.chat-panel{position:fixed;bottom:84px;right:24px;z-index:99;width:380px;max-height:520px;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;display:none;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+.chat-panel.open{display:flex;}
+.chat-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.chat-head-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.chat-head-info{flex:1;}
+.chat-head-title{font-size:12px;font-weight:800;}
+.chat-head-sub{font-size:10px;color:var(--gray);margin-top:1px;}
+.chat-close{background:none;border:none;color:var(--gray);cursor:pointer;font-size:18px;line-height:1;}
+.chat-close:hover{color:var(--white);}
+.chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0;}
+.chat-msg{display:flex;flex-direction:column;gap:3px;max-width:90%;}
+.chat-msg.user{align-self:flex-end;}
+.chat-msg.ai{align-self:flex-start;}
+.chat-bubble{padding:9px 13px;border-radius:6px;font-size:12px;line-height:1.55;}
+.chat-msg.user .chat-bubble{background:var(--red);color:#fff;}
+.chat-msg.ai .chat-bubble{background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
+.chat-meta{font-size:9px;color:var(--gray2);}
+.chat-msg.user .chat-meta{text-align:right;}
+.chat-empty{text-align:center;padding:24px 16px;color:var(--gray);font-size:11px;line-height:1.6;}
+.chat-empty strong{display:block;color:var(--white);font-size:12px;margin-bottom:6px;}
+.chat-sugs{display:flex;flex-wrap:wrap;gap:5px;padding:8px 12px 0;}
+.sug-chip{padding:4px 10px;border-radius:20px;border:1px solid var(--border2);font-size:10px;color:var(--gray);cursor:pointer;background:transparent;transition:all .15s;}
+.sug-chip:hover{color:var(--white);border-color:rgba(225,6,0,.5);background:var(--red-soft);}
+.chat-input-row{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
+.chat-input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:8px 11px;color:var(--white);font-size:11px;font-family:'Inter',sans-serif;outline:none;resize:none;min-height:34px;max-height:80px;}
+.chat-input:focus{border-color:rgba(225,6,0,.5);}
+.chat-send{background:var(--red);border:none;color:#fff;width:34px;height:34px;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;transition:background .15s;}
+.chat-send:hover{background:var(--red-deep);}
+.chat-send:disabled{opacity:.4;cursor:default;}
+.thinking{display:flex;gap:4px;align-items:center;padding:9px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;}
+.thinking span{width:5px;height:5px;border-radius:50%;background:var(--gray);animation:blink 1.2s infinite;}
+.thinking span:nth-child(2){animation-delay:.2s;}
+.thinking span:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,60%,100%{opacity:.2}30%{opacity:1}}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:24px;width:440px;max-width:92vw;box-shadow:0 30px 80px rgba(0,0,0,.7);}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.06em;margin-bottom:18px;}
+.fg{margin-bottom:14px;}
+.fl{display:block;font-size:9px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.18em;margin-bottom:6px;}
+.fi{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:4px;font-size:13px;color:var(--white);background:var(--bg3);outline:none;font-family:'Inter',sans-serif;transition:border-color .15s;}
+.fi:focus{border-color:var(--red);}
+.fh{font-size:10px;color:var(--gray2);margin-top:5px;line-height:1.5;}
+.fh code{color:var(--amber);font-size:10px;}
+.merr{color:#ff4040;font-size:11px;margin-top:10px;display:none;background:rgba(225,6,0,.1);padding:8px 12px;border-radius:4px;border:1px solid rgba(225,6,0,.2);}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+.btn{padding:8px 16px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;border:none;font-family:'Inter',sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:all .15s;}
+.btn-primary{background:var(--red);color:#fff;}.btn-primary:hover{background:var(--red-deep);}
+.btn-secondary{background:var(--bg3);color:var(--gray);border:1px solid var(--border2);}.btn-secondary:hover{color:var(--white);}
+.btn-danger{background:rgba(225,6,0,.15);color:#ff4040;border:1px solid rgba(225,6,0,.3);}.btn-danger:hover{background:rgba(225,6,0,.25);}
+
+/* Toast */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);padding:10px 20px;border-radius:5px;font-size:12px;color:var(--white);z-index:300;opacity:0;transition:opacity .2s;pointer-events:none;}
+.toast.show{opacity:1;}
+
+.sp{display:inline-block;width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sb">
+  <div class="sb-logo">
+    <div class="sb-logo-v4">V4 Company</div>
+    <div class="sb-logo-sub">Tráfego Pago · Dashboard</div>
+  </div>
+  <div class="sb-section">Menu</div>
+  <div class="ni ac" id="ni-ov" onclick="showOverview()"><span>◈</span><span class="ni-label">Visão Geral</span></div>
+  <div class="sb-section" style="margin-top:4px">Clientes</div>
+  <div id="cl-list"></div>
+  <div class="sb-footer"><button class="add-b" onclick="openAdd()">+ Adicionar Cliente</button></div>
+</div>
+
+<!-- Main -->
+<div class="main">
+<!-- Overview -->
+<div class="ov-view show" id="ov-view">
+  <div class="ov-hd">
+    <div class="ov-hd-title">Visão Geral</div>
+    <div class="ov-hd-sub">Performance consolidada · Última semana</div>
+  </div>
+  <div id="ov-grid" class="ov-grid"></div>
+  <div class="empty-state" id="ov-empty" style="display:none">
+    <div class="empty-state-icon">◈</div>
+    <h3>Nenhum cliente configurado</h3>
+    <p>Clique em "+ Adicionar Cliente" e cole o ID da planilha Google Sheets.</p>
+  </div>
+</div>
+
+<!-- Detail -->
+<div class="dv-wrap" id="dv-wrap">
+  <div class="topbar">
+    <button class="back-btn" onclick="showOverview()">← Voltar</button>
+    <div class="topbar-sep"></div>
+    <span class="dv-title" id="dv-title"></span>
+    <div class="mode-tgl">
+      <button class="mt-btn ac" id="mt-sem" onclick="setViewMode('semana')">Semana</button>
+      <button class="mt-btn"    id="mt-men" onclick="setViewMode('mensal')">Mês</button>
+    </div>
+    <div class="ch-tabs">
+      <div class="ch-tab ac" data-ch="geral"  onclick="setChannel('geral',this)">Geral</div>
+      <div class="ch-tab"    data-ch="meta"   onclick="setChannel('meta',this)">Meta</div>
+      <div class="ch-tab"    data-ch="google" onclick="setChannel('google',this)">Google</div>
+    </div>
+    <div class="fbar">
+      <span class="fbar-lbl">Período</span>
+      <div class="wf-btns">
+        <div class="wf-btn"    onclick="setPeriod(4,this)">4</div>
+        <div class="wf-btn"    onclick="setPeriod(8,this)">8</div>
+        <div class="wf-btn"    onclick="setPeriod(13,this)">13</div>
+        <div class="wf-btn ac" onclick="setPeriod(0,this)">Tudo</div>
+      </div>
+      <select class="wf-sel" id="wk-from" onchange="onRangeChange()"></select>
+      <span style="color:var(--gray2);font-size:10px">–</span>
+      <select class="wf-sel" id="wk-to"   onchange="onRangeChange()"></select>
+      <button class="proj-btn" id="proj-btn" onclick="toggleProjected(this)">⬡ Projetado</button>
+    </div>
+    <button class="ref-btn" onclick="refreshCurrent()" title="Atualizar">↻</button>
+  </div>
+
+  <div class="dv-body" id="dv-body">
+    <div class="mpills-wrap">
+      <div class="mpills-label">Métricas no gráfico</div>
+      <div class="mpills" id="mpills"></div>
+    </div>
+    <div class="kpi-row" id="kpi-row"></div>
+    <div class="chart-card">
+      <div class="chart-hd">
+        <div>
+          <div class="chart-title" id="chart-ttl">Evolução semanal</div>
+          <div class="chart-sub"  id="chart-sub"></div>
+        </div>
+      </div>
+      <div class="chart-box" id="chart-box"><canvas id="main-chart"></canvas></div>
+    </div>
+    <div class="tbl-card"><table><thead id="tbl-head"></thead><tbody id="tbl-body"></tbody></table></div>
+  </div>
+</div>
+</div>
+
+<!-- Chat -->
+<button class="chat-toggle" id="chat-toggle" onclick="toggleChat()">💬</button>
+<div class="chat-panel" id="chat-panel">
+  <div class="chat-head">
+    <div class="chat-head-dot"></div>
+    <div class="chat-head-info">
+      <div class="chat-head-title">Analista V4</div>
+      <div class="chat-head-sub" id="chat-ctx">Selecione um cliente</div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">×</button>
+  </div>
+  <div class="chat-sugs" id="chat-sugs"></div>
+  <div class="chat-msgs" id="chat-msgs">
+    <div class="chat-empty">
+      <strong>Analista de métricas</strong>
+      Pergunte sobre os dados do cliente ativo — diagnósticos, tendências ou recomendações de otimização.
+    </div>
+  </div>
+  <div class="chat-input-row">
+    <textarea class="chat-input" id="chat-input" placeholder="Pergunte sobre as métricas…" rows="1" onkeydown="chatKeydown(event)"></textarea>
+    <button class="chat-send" id="chat-send" onclick="sendChat()">↑</button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="modal-ov">
+  <div class="modal">
+    <div class="modal-title" id="m-title">Adicionar Cliente</div>
+    <div class="fg">
+      <label class="fl">Nome do Cliente</label>
+      <input class="fi" id="i-name" placeholder="Ex: Drogalis, INPOWER…"/>
+    </div>
+    <div class="fg">
+      <label class="fl">ID da Planilha Google Sheets</label>
+      <input class="fi" id="i-sheet" placeholder="1Gne0JUtEnrxCqVygwolRMm27WgPhdLBfMlT2v7ZkQOU"/>
+      <div class="fh">Cole só o ID: docs.google.com/spreadsheets/d/<code>ID_AQUI</code>/edit</div>
+    </div>
+    <div class="merr" id="m-err"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-danger" id="b-del" style="display:none" onclick="deleteClient()">Remover</button>
+      <button class="btn btn-primary"  onclick="saveClient()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// Config
+// ══════════════════════════════════════════
+Chart.defaults.color = '#9a9a9a';
+Chart.defaults.borderColor = 'rgba(255,255,255,.06)';
+
+const TABS_SEM = {geral:'Acomp_Semana_Geral',  meta:'Acomp_Semana_Meta',  google:'Acomp_Semana_Google'};
+const TABS_MEN = {geral:'Acomp_Mensal_Geral',   meta:'Acomp_Mensal_Meta',  google:'Acomp_Mensal_Google'};
+
+const COLS = {
+  mes:         /^m[eê]s$/i,
+  semana:      /^sem\.?$|^semana$|^week$/i,
+  inicio:      /^inicio$/i,
+  fim:         /^fim$/i,
+  canal:       /^canal$/i,
+  investimento:/^investimento$|^invest$/i,
+  alcance:     /^alcance$|^reach$/i,
+  cliques:     /^cliques?$|^clicks?$/i,
+  leads:       /^leads?$/i,
+  mql:         /^mql$/i,
+  sql:         /^sql$/i,
+  vendas:      /^vendas?$/i,
+  faturamento: /^faturamento$|^revenue$/i,
+  roas:        /^roas$/i,
+  roi:         /^roi$/i,
+  cpl:         /^cpl$|custo.?por.?lead/i,
+  cpc:         /^cpc$/i,
+};
+
+const METRICS = [
+  {k:'investimento', l:'Investimento', f:fCurr, lb:false, col:'#818cf8'},
+  {k:'leads',        l:'Leads',        f:fInt,  lb:false, col:'#34d399'},
+  {k:'cpl',          l:'CPL',          f:fCurr, lb:true,  col:'#fb923c'},
+  {k:'roas',         l:'ROAS',         f:fRoas, lb:false, col:'#a78bfa'},
+  {k:'mql',          l:'MQL',          f:fInt,  lb:false, col:'#fbbf24'},
+  {k:'sql',          l:'SQL',          f:fInt,  lb:false, col:'#60a5fa'},
+  {k:'vendas',       l:'Vendas',       f:fInt,  lb:false, col:'#22d3ee'},
+  {k:'faturamento',  l:'Faturamento',  f:fCurr, lb:false, col:'#86efac'},
+  {k:'roi',          l:'ROI',          f:fPct,  lb:false, col:'#c084fc'},
+  {k:'alcance',      l:'Alcance',      f:fInt,  lb:false, col:'#94a3b8'},
+  {k:'cliques',      l:'Cliques',      f:fInt,  lb:false, col:'#38bdf8'},
+  {k:'cpc',          l:'CPC',          f:fCurr, lb:true,  col:'#f97316'},
+];
+
+// ══════════════════════════════════════════
+// State
+// ══════════════════════════════════════════
+let clients = [];
+let cdata   = {};
+let sbUrl   = '', sbKey = '';
+let view    = 'overview', activeId = null, editId = null;
+let channel = 'geral', viewMode = 'semana';
+let wkFrom  = null, wkTo = null, wkPreset = 0;
+let showProj = false;
+let activeMetrics = new Set(['investimento','leads']);
+let mainChart = null, chartTimer = null;
+let chatOpen = false;
+
+// ══════════════════════════════════════════
+// Format helpers
+// ══════════════════════════════════════════
+function pNum(s){if(s==null||s===''||s==='-'||/^#?N\/A$/i.test(String(s)))return null;const c=String(s).replace(/R\$\s*/g,'').replace(/\./g,'').replace(',','.').replace(/[^\d.\-]/g,'');const n=parseFloat(c);return isNaN(n)?null:n;}
+function fDate(s){if(!s)return'';const d=new Date(s);if(!isNaN(d))return`${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}`;return String(s).slice(0,5);}
+function fCurr(n){return n==null?'—':'R$ '+Math.round(n).toLocaleString('pt-BR');}
+function fInt(n){return n==null?'—':Math.round(n).toLocaleString('pt-BR');}
+function fRoas(n){return n==null?'—':n.toFixed(2)+'x';}
+function fPct(n){return n==null?'—':n.toFixed(1)+'%';}
+function trnd(curr,prev,lb){
+  if(curr==null||prev==null||prev===0)return'<span class="nt">—</span>';
+  const p=(curr-prev)/prev*100,up=p>0,good=lb?!up:up;
+  return`<span class="${good?'up':'dn'}">${up?'↑':'↓'} ${Math.abs(p).toFixed(1)}%</span>`;
+}
+
+// ══════════════════════════════════════════
+// Sheet API parser (raw 2D arrays from Google Sheets API v4)
+// ══════════════════════════════════════════
+function parseSheetRows(values) {
+  // values = [[row0cell0, row0cell1, ...], [row1cell0, ...], ...]
+  if (!values || values.length < 2) return null;
+
+  // Find the header row (col names row)
+  let hIdx = -1;
+  for (let i = 0; i < Math.min(values.length, 15); i++) {
+    const row = values[i];
+    const hasWeek  = row.some(c => /^sem\.?$|^semana$|^week$|^m[eê]s$/i.test((c||'').trim()));
+    const hasLeads = row.some(c => /^leads?$/i.test((c||'').trim()));
+    const hasInvest= row.some(c => /^investimento$|^invest$/i.test((c||'').trim()));
+    if (hasWeek || (hasLeads && hasInvest)) { hIdx = i; break; }
+  }
+  if (hIdx < 0) {
+    // Fallback: row with most COLS matches
+    let bScore = 0, best = 0;
+    for (let i = 0; i < Math.min(values.length, 15); i++) {
+      const s = Object.values(COLS).filter(p => values[i].some(c => p.test((c||'').trim()))).length;
+      if (s > bScore) { bScore = s; best = i; }
+    }
+    if (bScore < 2) return null;
+    hIdx = best;
+  }
+
+  const headers = values[hIdx].map(h => (h||'').trim());
+  const colMapR = {}, colMapP = {};
+  headers.forEach((h, i) => {
+    const clean = h.toLowerCase();
+    if (!clean) return;
+    for (const [key, pat] of Object.entries(COLS)) {
+      if (pat.test(clean)) {
+        if (colMapP[key] === undefined) colMapP[key] = i; // first = Projetado
+        colMapR[key] = i;                                  // last  = Realizado
+        break;
+      }
+    }
+  });
+
+  const dataRows = [];
+  for (let i = hIdx + 1; i < values.length; i++) {
+    const row = values[i];
+    if (!row || row.every(c => !c)) continue;
+
+    const obj = { _raw: row };
+    headers.forEach((h, idx) => { obj[h] = row[idx] || ''; });
+
+    const mes  = colMapR.mes     !== undefined ? (row[colMapR.mes]     || '') : '';
+    const ini  = colMapR.inicio  !== undefined ? (row[colMapR.inicio]  || '') : '';
+    const fim  = colMapR.fim     !== undefined ? (row[colMapR.fim]     || '') : '';
+    const sem  = colMapR.semana  !== undefined ? (row[colMapR.semana]  || '') : '';
+
+    if (mes) obj._week = mes;
+    else if (ini && fim) obj._week = fDate(ini) + ' – ' + fDate(fim);
+    else if (sem) obj._week = String(sem).replace(/\.0$/, '');
+    else obj._week = `#${i}`;
+
+    obj._semNum = pNum(sem) || pNum(mes) || null;
+
+    for (const [key, idx] of Object.entries(colMapR)) obj[`_${key}`] = pNum(row[idx]);
+    for (const [key, idx] of Object.entries(colMapP)) {
+      if (colMapP[key] !== colMapR[key]) obj[`_${key}_p`] = pNum(row[idx]);
+    }
+
+    const hasData = ['investimento','leads','cpl','roas','vendas','faturamento','mql'].some(k => obj[`_${k}`] != null);
+    if (hasData) dataRows.push(obj);
+  }
+
+  return dataRows.length ? { headers, colMapR, colMapP, rows: dataRows } : null;
+}
+
+// ══════════════════════════════════════════
+// Supabase helpers
+// ══════════════════════════════════════════
+async function sbFetch(path, opts = {}) {
+  if (!sbUrl) return null;
+  const r = await fetch(`${sbUrl}/rest/v1${path}`, {
+    ...opts,
+    headers: {
+      'apikey': sbKey,
+      'Authorization': `Bearer ${sbKey}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+      ...(opts.headers || {}),
+    },
+  });
+  if (!r.ok) throw new Error(`Supabase ${r.status}: ${await r.text()}`);
+  const text = await r.text();
+  return text ? JSON.parse(text) : null;
+}
+
+async function loadClientsFromSupabase() {
+  try {
+    const rows = await sbFetch('/clients?select=*&order=created_at.asc');
+    clients = (rows || []).map(r => ({ id: r.id, name: r.name, sheetId: r.sheet_id }));
+  } catch (e) {
+    console.warn('Supabase load failed:', e.message);
+  }
+}
+
+async function insertClientToSupabase(name, sheetId) {
+  const rows = await sbFetch('/clients', {
+    method: 'POST',
+    body: JSON.stringify({ name, sheet_id: sheetId }),
+  });
+  return rows?.[0];
+}
+
+async function deleteClientFromSupabase(id) {
+  await sbFetch(`/clients?id=eq.${id}`, { method: 'DELETE' });
+}
+
+// ══════════════════════════════════════════
+// Data loading
+// ══════════════════════════════════════════
+async function loadClient(c) {
+  try {
+    const r = await fetch(`/api/sheet?sheetId=${encodeURIComponent(c.sheetId)}`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const payload = await r.json();
+    const allTabs = payload.tabs || {};
+
+    const semana = {}, mensal = {};
+    let anyOk = false;
+
+    for (const [ch, tabName] of Object.entries(TABS_SEM)) {
+      const values = allTabs[tabName] || [];
+      const parsed = values.length ? parseSheetRows(values) : null;
+      semana[ch] = parsed || { headers: [], colMapR: {}, colMapP: {}, rows: [] };
+      if (parsed) anyOk = true;
+    }
+    for (const [ch, tabName] of Object.entries(TABS_MEN)) {
+      const values = allTabs[tabName] || [];
+      const parsed = values.length ? parseSheetRows(values) : null;
+      mensal[ch] = parsed || { headers: [], colMapR: {}, colMapP: {}, rows: [] };
+      if (parsed) anyOk = true;
+    }
+
+    if (!anyOk) throw new Error('Nenhuma métrica encontrada — verifique o ID e se a planilha é pública.');
+    cdata[c.id] = { semana, mensal, updated: new Date(), error: null };
+  } catch (e) {
+    const empty = { headers: [], colMapR: {}, colMapP: {}, rows: [] };
+    cdata[c.id] = { semana: { geral: { ...empty, error: e.message }, meta: { ...empty }, google: { ...empty } }, mensal: { geral: { ...empty }, meta: { ...empty }, google: { ...empty } }, updated: new Date(), error: e.message };
+  }
+}
+
+async function refreshCurrent() {
+  const c = clients.find(x => x.id === activeId);
+  if (!c) return;
+  delete cdata[c.id];
+  renderSidebar();
+  await loadClient(c);
+  renderDetail(c.id);
+  renderSidebar();
+}
+
+// ══════════════════════════════════════════
+// Data helpers
+// ══════════════════════════════════════════
+function getModeData() { return activeId && cdata[activeId] ? cdata[activeId][viewMode] : null; }
+function getChannelData() { const md = getModeData(); return md?.[channel] || { rows: [], headers: [], colMapR: {}, colMapP: {} }; }
+function getActiveRows() {
+  const ch = getChannelData(); let rows = ch.rows || [];
+  if (wkFrom !== null) rows = rows.filter(r => r._semNum === null || r._semNum >= wkFrom);
+  if (wkTo   !== null) rows = rows.filter(r => r._semNum === null || r._semNum <= wkTo);
+  return rows;
+}
+function getAvailMetrics(rows) { return METRICS.filter(m => rows.some(r => r[`_${m.k}`] != null)); }
+
+// ══════════════════════════════════════════
+// Week selects
+// ══════════════════════════════════════════
+function populateWkSelects() {
+  const md = getModeData(); const allRows = [];
+  if (md) for (const ch of Object.values(md)) { if (ch.rows) allRows.push(...ch.rows); }
+  const nums = [...new Set(allRows.map(r => r._semNum).filter(n => n !== null))].sort((a,b) => a - b);
+  const wkMap = {}; allRows.forEach(r => { if (r._semNum != null) wkMap[r._semNum] = r._week; });
+  const s1 = document.getElementById('wk-from'), s2 = document.getElementById('wk-to');
+  s1.innerHTML = nums.map(n => `<option value="${n}">${wkMap[n] || n}</option>`).join('');
+  s2.innerHTML = nums.map(n => `<option value="${n}">${wkMap[n] || n}</option>`).join('');
+  if (nums.length) {
+    const minN = nums[0], maxN = nums[nums.length - 1];
+    if (wkPreset > 0) { const f = Math.max(minN, maxN - wkPreset + 1); s1.value = f; s2.value = maxN; wkFrom = f; wkTo = maxN; }
+    else { s1.value = minN; s2.value = maxN; wkFrom = null; wkTo = null; }
+  }
+}
+function onRangeChange() { wkFrom = Number(document.getElementById('wk-from').value) || null; wkTo = Number(document.getElementById('wk-to').value) || null; document.querySelectorAll('.wf-btn').forEach(b => b.classList.remove('ac')); refreshDetail(); }
+function setPeriod(n, el) {
+  wkPreset = n; document.querySelectorAll('.wf-btn').forEach(b => b.classList.remove('ac')); el.classList.add('ac');
+  const s2 = document.getElementById('wk-to'), opts = [...s2.options].map(o => Number(o.value)).filter(Boolean);
+  if (!opts.length) return;
+  const maxN = Math.max(...opts), minN = Math.min(...opts), s1 = document.getElementById('wk-from');
+  if (n === 0) { s1.value = minN; s2.value = maxN; wkFrom = null; wkTo = null; }
+  else { const f = Math.max(minN, maxN - n + 1); s1.value = f; s2.value = maxN; wkFrom = f; wkTo = maxN; }
+  refreshDetail();
+}
+
+// ══════════════════════════════════════════
+// Pills
+// ══════════════════════════════════════════
+function buildPills(rows) {
+  const avail = getAvailMetrics(rows);
+  if (!avail.length) { document.getElementById('mpills').innerHTML = ''; return; }
+  const availKeys = new Set(avail.map(m => m.k));
+  activeMetrics = new Set([...activeMetrics].filter(k => availKeys.has(k)));
+  if (activeMetrics.size === 0) activeMetrics.add(avail[0].k);
+  document.getElementById('mpills').innerHTML = avail.map(m => {
+    const on = activeMetrics.has(m.k);
+    const s = on ? `background:${m.col};color:#fff;border-color:${m.col}` : `color:${m.col};border-color:${m.col}40;background:${m.col}12`;
+    return `<div class="mpill" style="${s}" onclick="toggleMetric('${m.k}',this)" data-key="${m.k}">${m.l}</div>`;
+  }).join('');
+}
+function toggleMetric(key, el) {
+  if (activeMetrics.has(key)) { if (activeMetrics.size <= 1) return; activeMetrics.delete(key); const m = METRICS.find(x => x.k === key); el.style.cssText = `color:${m.col};border-color:${m.col}40;background:${m.col}12`; }
+  else { activeMetrics.add(key); const m = METRICS.find(x => x.k === key); el.style.cssText = `background:${m.col};color:#fff;border-color:${m.col}`; }
+  scheduleChart();
+}
+
+// ══════════════════════════════════════════
+// Chart
+// ══════════════════════════════════════════
+function scheduleChart() { if (chartTimer) clearTimeout(chartTimer); chartTimer = setTimeout(() => { renderChart(getActiveRows()); chartTimer = null; }, 60); }
+
+function renderChart(rows) {
+  const box = document.getElementById('chart-box');
+  if (mainChart) { mainChart.destroy(); mainChart = null; }
+  if (!rows.length) { box.innerHTML = '<div class="no-data">Sem dados para o período</div>'; return; }
+  if (!box.querySelector('canvas')) box.innerHTML = '<canvas id="main-chart"></canvas>';
+  const ctx = document.getElementById('main-chart').getContext('2d');
+  const labels = rows.map(r => r._week), datasets = [];
+  for (const key of [...activeMetrics]) {
+    const m = METRICS.find(x => x.k === key); if (!m) continue;
+    const data = rows.map(r => r[`_${key}`]); if (!data.some(v => v != null)) continue;
+    datasets.push({ label: m.l, data, borderColor: m.col, backgroundColor: m.col + '18', tension: .4, fill: activeMetrics.size === 1, pointRadius: 3, pointHoverRadius: 5, borderWidth: 2 });
+    if (showProj) { const dp = rows.map(r => r[`_${key}_p`]); if (dp.some(v => v != null)) datasets.push({ label: m.l + ' Proj.', data: dp, borderColor: m.col, borderDash: [5, 4], tension: .4, fill: false, pointRadius: 2, borderWidth: 1.5, pointStyle: 'triangle' }); }
+  }
+  if (!datasets.length) return;
+  mainChart = new Chart(ctx, { type: 'line', data: { labels, datasets }, options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'top', labels: { font: { size: 10 }, padding: 12, usePointStyle: true } }, tooltip: { backgroundColor: '#1f1f1f', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1, titleColor: '#fff', bodyColor: '#b8b8b8', callbacks: { label(c) { const m = METRICS.find(x => x.l === c.dataset.label || c.dataset.label.startsWith(x.l)); return ` ${c.dataset.label}: ${m ? m.f(c.raw) : c.raw}`; } } } },
+    scales: { x: { ticks: { font: { size: 9 }, maxRotation: 35, maxTicksLimit: 16, color: '#6b6b6b' }, grid: { color: 'rgba(255,255,255,.04)' } }, y: { ticks: { font: { size: 9 }, color: '#6b6b6b', callback: v => Math.abs(v) >= 1000 ? (v / 1000).toFixed(0) + 'k' : v }, grid: { color: 'rgba(255,255,255,.05)' } } }
+  }});
+}
+
+// ══════════════════════════════════════════
+// KPIs
+// ══════════════════════════════════════════
+function renderKPIs(rows) {
+  const last = rows[rows.length - 1], prev = rows.length > 1 ? rows[rows.length - 2] : null;
+  if (!last) { document.getElementById('kpi-row').innerHTML = ''; return; }
+  const avail = METRICS.filter(m => last[`_${m.k}`] != null);
+  document.getElementById('kpi-row').innerHTML = avail.map(m => {
+    const v = last[`_${m.k}`], p = prev?.[`_${m.k}`], vp = last[`_${m.k}_p`];
+    const proj = vp != null && showProj ? `<div class="kpi-proj">Proj: ${m.f(vp)}</div>` : '';
+    return `<div class="kpi-card"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:${m.col}"></div><div class="kpi-label"><span style="width:6px;height:6px;border-radius:50%;background:${m.col};display:inline-block;flex-shrink:0"></span>${m.l}</div><div class="kpi-value">${m.f(v)}</div><div class="kpi-trend">${trnd(v, p, m.lb)}</div>${proj}</div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// Table
+// ══════════════════════════════════════════
+function renderTable(rows) {
+  if (!rows.length) { document.getElementById('tbl-head').innerHTML = ''; document.getElementById('tbl-body').innerHTML = '<tr><td style="padding:20px;color:var(--gray);text-align:center">Sem dados</td></tr>'; return; }
+  const avail = getAvailMetrics(rows);
+  document.getElementById('tbl-head').innerHTML = `<tr><th>Período</th>${avail.map(m => `<th>${m.l}</th>`).join('')}${showProj ? avail.filter(m => rows.some(r => r[`_${m.k}_p`] != null)).map(m => `<th>${m.l} Proj.</th>`).join('') : ''}</tr>`;
+  document.getElementById('tbl-body').innerHTML = [...rows].reverse().map((row, i) =>
+    `<tr class="${i === 0 ? 'hi' : ''}"><td>${row._week}</td>${avail.map(m => `<td>${m.f(row['_' + m.k])}</td>`).join('')}${showProj ? avail.filter(m => rows.some(r => r[`_${m.k}_p`] != null)).map(m => `<td style="color:#a78bfa">${m.f(row['_' + m.k + '_p'])}</td>`).join('') : ''}</tr>`
+  ).join('');
+}
+
+// ══════════════════════════════════════════
+// Render
+// ══════════════════════════════════════════
+function render() { renderSidebar(); view === 'overview' ? renderOverview() : renderDetail(activeId); }
+
+function renderSidebar() {
+  document.getElementById('cl-list').innerHTML = clients.map(c => {
+    const d = cdata[c.id], s = !d ? 'ld' : d.error ? 'er' : 'ok';
+    const a = (view === 'detail' && activeId === c.id) ? ' ac' : '';
+    return `<div class="ni${a}" onclick="showDetail('${c.id}')" ondblclick="openEdit('${c.id}')"><span>◈</span><span class="ni-label" title="${c.name}">${c.name}</span><span class="ni-dot ${s}"></span></div>`;
+  }).join('');
+  document.getElementById('ni-ov').classList.toggle('ac', view === 'overview');
+}
+
+function renderOverview() {
+  document.getElementById('ov-view').classList.add('show');
+  document.getElementById('dv-wrap').classList.remove('show');
+  const grid = document.getElementById('ov-grid'), emp = document.getElementById('ov-empty');
+  if (!clients.length) { grid.innerHTML = ''; emp.style.display = ''; return; }
+  emp.style.display = 'none';
+  grid.innerHTML = clients.map(c => {
+    const d = cdata[c.id];
+    if (!d) return `<div class="cl-card"><div class="cl-card-top"><div class="cl-card-name">${c.name}</div><span class="badge b-ld">Carregando</span></div><div style="text-align:center;padding:20px"><span class="sp"></span></div></div>`;
+    if (d.error) return `<div class="cl-card" onclick="openEdit('${c.id}')"><div class="cl-card-top"><div class="cl-card-name">${c.name}</div><span class="badge b-er">Erro</span></div><div style="color:#ff4040;font-size:11px;margin-top:6px">${d.error}</div></div>`;
+    const ch = d.semana?.geral || d.semana?.meta || { rows: [] }, rows = ch.rows || [], last = rows[rows.length - 1], prev = rows.length > 1 ? rows[rows.length - 2] : null;
+    const show = METRICS.filter(m => last?.[`_${m.k}`] != null).slice(0, 6);
+    return `<div class="cl-card" onclick="showDetail('${c.id}')"><div class="cl-card-top"><div><div class="cl-card-name">${c.name}</div><div class="cl-card-sub">${rows.length} sem. · Última: ${last?._week || '—'}</div></div><span class="badge b-ok">✓ Online</span></div><div class="mtr-g">${show.map(m => { const v = last[`_${m.k}`], p = prev?.[`_${m.k}`]; return `<div class="mtr"><div class="mtr-l"><span style="width:5px;height:5px;border-radius:50%;background:${m.col};display:inline-block;flex-shrink:0"></span>${m.l}</div><div class="mtr-v">${m.f(v)}</div><div class="mtr-t">${trnd(v, p, m.lb)}</div></div>`; }).join('')}</div></div>`;
+  }).join('');
+}
+
+function renderDetail(id) {
+  const c = clients.find(x => x.id === id), d = cdata[id]; if (!c) return;
+  document.getElementById('ov-view').classList.remove('show');
+  document.getElementById('dv-wrap').classList.add('show');
+  document.getElementById('dv-title').textContent = c.name;
+  document.getElementById('mt-sem').classList.toggle('ac', viewMode === 'semana');
+  document.getElementById('mt-men').classList.toggle('ac', viewMode === 'mensal');
+  document.querySelectorAll('.ch-tab').forEach(t => t.classList.toggle('ac', t.dataset.ch === channel));
+  document.getElementById('proj-btn').classList.toggle('ac', showProj);
+  updateChatCtx();
+  if (!d) { document.getElementById('chart-box').innerHTML = '<div class="no-data"><span class="sp"></span></div>'; document.getElementById('kpi-row').innerHTML = ''; return; }
+  if (d.error) { document.getElementById('chart-box').innerHTML = `<div class="no-data" style="color:#ff4040">${d.error}</div>`; return; }
+  populateWkSelects();
+  const rows = getActiveRows();
+  const chLabel = { geral: 'Geral · Todos os canais', meta: 'Meta Ads', google: 'Google Ads' };
+  const mLabel  = { semana: 'semanal', mensal: 'mensal' };
+  document.getElementById('chart-ttl').textContent = `Evolução ${mLabel[viewMode]} · ${chLabel[channel]}`;
+  document.getElementById('chart-sub').textContent = `${rows.length} períodos · Última: ${rows[rows.length - 1]?._week || '—'}`;
+  buildPills(rows); renderKPIs(rows); renderTable(rows); scheduleChart();
+}
+function refreshDetail() { if (activeId && cdata[activeId]) renderDetail(activeId); }
+
+// ══════════════════════════════════════════
+// Navigation
+// ══════════════════════════════════════════
+function showOverview() { view = 'overview'; activeId = null; render(); }
+function showDetail(id) { const first = activeId !== id; view = 'detail'; activeId = id; if (first) { wkFrom = null; wkTo = null; wkPreset = 0; } renderSidebar(); renderDetail(id); }
+function setChannel(ch, el) { channel = ch; document.querySelectorAll('.ch-tab').forEach(t => t.classList.remove('ac')); el.classList.add('ac'); populateWkSelects(); refreshDetail(); }
+function setViewMode(m) { viewMode = m; document.getElementById('mt-sem').classList.toggle('ac', m === 'semana'); document.getElementById('mt-men').classList.toggle('ac', m === 'mensal'); wkFrom = null; wkTo = null; wkPreset = 0; document.querySelectorAll('.wf-btn').forEach(b => b.classList.toggle('ac', b.textContent === 'Tudo')); populateWkSelects(); refreshDetail(); }
+function toggleProjected(el) { showProj = !showProj; el.classList.toggle('ac', showProj); refreshDetail(); }
+
+// ══════════════════════════════════════════
+// Chat
+// ══════════════════════════════════════════
+const SUGS = [
+  'Como está o CPL nas últimas semanas?',
+  'Qual semana teve melhor ROAS?',
+  'O que pode estar causando queda nos leads?',
+  'Compare investimento vs leads gerados.',
+  'Qual a tendência de faturamento?',
+  'O ROAS está acima ou abaixo do projetado?',
+];
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  document.getElementById('chat-panel').classList.toggle('open', chatOpen);
+  document.getElementById('chat-toggle').textContent = chatOpen ? '×' : '💬';
+  if (chatOpen) updateChatCtx();
+}
+
+function updateChatCtx() {
+  if (!activeId) { document.getElementById('chat-ctx').textContent = 'Selecione um cliente'; return; }
+  const c = clients.find(x => x.id === activeId);
+  const rows = getActiveRows();
+  const chLabel = { geral: 'Geral', meta: 'Meta Ads', google: 'Google Ads' };
+  document.getElementById('chat-ctx').textContent = `${c?.name || '—'} · ${chLabel[channel]} · ${rows.length} períodos`;
+  document.getElementById('chat-sugs').innerHTML = SUGS.slice(0, 4).map(s => `<div class="sug-chip" onclick="useSug('${s.replace(/'/g,"\\'")}')">${s}</div>`).join('');
+}
+
+function useSug(text) { document.getElementById('chat-input').value = text; sendChat(); }
+function chatKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } }
+
+function fmtForAI(rows) {
+  if (!rows.length) return 'Nenhum dado disponível.';
+  const avail = getAvailMetrics(rows);
+  const last = rows[rows.length - 1], prev = rows.length > 1 ? rows[rows.length - 2] : null;
+  const summary = avail.map(m => {
+    const v = last[`_${m.k}`], p = prev?.[`_${m.k}`];
+    if (v == null) return null;
+    const delta = p && p !== 0 ? ((v - p) / p * 100).toFixed(1) + '%' : null;
+    return `${m.l}: ${m.f(v)}${delta ? ` (${Number(delta) > 0 ? '+' : ''}${delta} vs anterior)` : ''}`;
+  }).filter(Boolean);
+  const header = 'Período | ' + avail.map(m => m.l).join(' | ');
+  const sample = rows.slice(-12).map(r => [r._week, ...avail.map(m => m.f(r[`_${m.k}`]))].join(' | '));
+  return `Última semana:\n${summary.join('\n')}\n\nHistórico (últimas ${sample.length} semanas):\n${header}\n${sample.join('\n')}`;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const question = input.value.trim();
+  if (!question || !activeId) return;
+  const c = clients.find(x => x.id === activeId);
+  const rows = getActiveRows();
+  addChatMsg('user', question);
+  input.value = '';
+  document.getElementById('chat-send').disabled = true;
+  const thinkId = 'think-' + Date.now();
+  const msgsEl = document.getElementById('chat-msgs');
+  msgsEl.innerHTML += `<div class="chat-msg ai" id="${thinkId}"><div class="thinking"><span></span><span></span><span></span></div></div>`;
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+
+  try {
+    const chLabel = { geral: 'Geral (todos os canais)', meta: 'Meta Ads', google: 'Google Ads' };
+    const mLabel  = { semana: 'semanal', mensal: 'mensal' };
+    const ctx = fmtForAI(rows);
+    const prompt = `Você é um analista sênior de tráfego pago da V4 Company, especialista em diagnóstico de performance e otimização de mídia paga. Seja direto, objetivo e baseado em dados. Foque em insights acionáveis.
+
+CONTEXTO:
+- Cliente: ${c?.name}
+- Canal: ${chLabel[channel]}
+- Granularidade: ${mLabel[viewMode]}
+- Período: ${rows.length} ${viewMode === 'semana' ? 'semanas' : 'meses'} (${rows[0]?._week || '?'} a ${rows[rows.length - 1]?._week || '?'})
+
+DADOS:
+${ctx}
+
+PERGUNTA: ${question}
+
+Responda em português, de forma concisa. Use dados concretos. Máximo 200 palavras.`;
+
+    const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
+    const data = await r.json();
+    document.getElementById(thinkId)?.remove();
+    addChatMsg('ai', data.response || 'Sem resposta.');
+  } catch (e) {
+    document.getElementById(thinkId)?.remove();
+    addChatMsg('ai', 'Erro ao processar: ' + e.message);
+  } finally {
+    document.getElementById('chat-send').disabled = false;
+    document.getElementById('chat-input').focus();
+  }
+}
+
+function addChatMsg(role, text) {
+  const msgsEl = document.getElementById('chat-msgs');
+  msgsEl.querySelector('.chat-empty')?.remove();
+  const now = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  msgsEl.innerHTML += `<div class="chat-msg ${role}"><div class="chat-bubble">${escHtml(text)}</div><div class="chat-meta">${role === 'user' ? 'Você' : 'Analista V4'} · ${now}</div></div>`;
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+
+// ══════════════════════════════════════════
+// Toast
+// ══════════════════════════════════════════
+function toast(msg, dur = 2500) {
+  const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), dur);
+}
+
+// ══════════════════════════════════════════
+// Modal / CRUD
+// ══════════════════════════════════════════
+function openAdd() { editId = null; document.getElementById('m-title').textContent = 'Adicionar Cliente'; document.getElementById('i-name').value = ''; document.getElementById('i-sheet').value = ''; document.getElementById('m-err').style.display = 'none'; document.getElementById('b-del').style.display = 'none'; document.getElementById('modal-ov').classList.add('show'); setTimeout(() => document.getElementById('i-name').focus(), 50); }
+function openEdit(id) { const c = clients.find(x => x.id === id); if (!c) return; editId = id; document.getElementById('m-title').textContent = 'Editar Cliente'; document.getElementById('i-name').value = c.name; document.getElementById('i-sheet').value = c.sheetId; document.getElementById('m-err').style.display = 'none'; document.getElementById('b-del').style.display = ''; document.getElementById('modal-ov').classList.add('show'); }
+function closeModal() { document.getElementById('modal-ov').classList.remove('show'); }
+function showErr(m) { const e = document.getElementById('m-err'); e.textContent = m; e.style.display = ''; }
+
+async function saveClient() {
+  const name = document.getElementById('i-name').value.trim(), sheetId = document.getElementById('i-sheet').value.trim();
+  if (!name) return showErr('Digite o nome do cliente.');
+  if (!sheetId) return showErr('Cole o ID da planilha.');
+  try {
+    if (editId) {
+      // Update in Supabase
+      await sbFetch(`/clients?id=eq.${editId}`, { method: 'PATCH', body: JSON.stringify({ name, sheet_id: sheetId }) });
+      const c = clients.find(x => x.id === editId);
+      if (c) { c.name = name; c.sheetId = sheetId; delete cdata[editId]; }
+    } else {
+      const row = await insertClientToSupabase(name, sheetId);
+      const newId = row?.id || Date.now().toString();
+      clients.push({ id: newId, name, sheetId });
+    }
+    closeModal();
+    render();
+    const id = editId || clients[clients.length - 1].id;
+    await loadClient(clients.find(x => x.id === id));
+    render();
+    toast('✓ Cliente salvo');
+  } catch (e) {
+    showErr('Erro: ' + e.message);
+  }
+}
+
+async function deleteClient() {
+  if (!editId) return;
+  try {
+    await deleteClientFromSupabase(editId);
+    clients = clients.filter(c => c.id !== editId);
+    delete cdata[editId];
+    closeModal();
+    if (activeId === editId) showOverview(); else render();
+    toast('Cliente removido');
+  } catch (e) {
+    showErr('Erro: ' + e.message);
+  }
+}
+
+document.getElementById('modal-ov').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+// ══════════════════════════════════════════
+// Init
+// ══════════════════════════════════════════
+async function init() {
+  render();
+  // Load Supabase config from API
+  try {
+    const r = await fetch('/api/config');
+    if (r.ok) {
+      const cfg = await r.json();
+      sbUrl = cfg.supabaseUrl || '';
+      sbKey = cfg.supabaseKey || '';
+    }
+  } catch (e) {
+    console.warn('Config load failed:', e.message);
+  }
+
+  // Load clients from Supabase
+  await loadClientsFromSupabase();
+  render();
+
+  // Load data for all clients in parallel
+  if (clients.length) {
+    await Promise.all(clients.map(loadClient));
+    render();
+  }
+}
+
+init();
+</script>
+</body>
+</html>

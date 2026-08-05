@@ -573,28 +573,27 @@ function getAvailMetrics(rows) { return METRICS.filter(m => rows.some(r => r[`_$
 // ══════════════════════════════════════════
 // Week selects
 // ══════════════════════════════════════════
+let _allNums = []; // cached period numbers for setPeriod
 function populateWkSelects() {
   const md = getModeData(); const allRows = [];
   if (md) for (const ch of Object.values(md)) { if (ch.rows) allRows.push(...ch.rows); }
   const nums = [...new Set(allRows.map(r => r._semNum).filter(n => n !== null))].sort((a,b) => a - b);
-  const wkMap = {}; allRows.forEach(r => { if (r._semNum != null) wkMap[r._semNum] = r._week; });
-  const s1 = document.getElementById('wk-from'), s2 = document.getElementById('wk-to');
-  s1.innerHTML = nums.map(n => `<option value="${n}">${wkMap[n] || n}</option>`).join('');
-  s2.innerHTML = nums.map(n => `<option value="${n}">${wkMap[n] || n}</option>`).join('');
+  _allNums = nums;
   if (nums.length) {
     const minN = nums[0], maxN = nums[nums.length - 1];
-    if (wkPreset > 0) { const f = Math.max(minN, maxN - wkPreset + 1); s1.value = f; s2.value = maxN; wkFrom = f; wkTo = maxN; }
-    else { s1.value = minN; s2.value = maxN; wkFrom = null; wkTo = null; }
+    if (wkPreset > 0) { const f = Math.max(minN, maxN - wkPreset + 1); wkFrom = f; wkTo = maxN; }
+    else { wkFrom = null; wkTo = null; }
   }
 }
-function onRangeChange() { wkFrom = Number(document.getElementById('wk-from').value) || null; wkTo = Number(document.getElementById('wk-to').value) || null; document.querySelectorAll('.wf-btn').forEach(b => b.classList.remove('ac')); refreshDetail(); }
 function setPeriod(n, el) {
-  wkPreset = n; document.querySelectorAll('.wf-btn').forEach(b => b.classList.remove('ac')); el.classList.add('ac');
-  const s2 = document.getElementById('wk-to'), opts = [...s2.options].map(o => Number(o.value)).filter(Boolean);
-  if (!opts.length) return;
-  const maxN = Math.max(...opts), minN = Math.min(...opts), s1 = document.getElementById('wk-from');
-  if (n === 0) { s1.value = minN; s2.value = maxN; wkFrom = null; wkTo = null; }
-  else { const f = Math.max(minN, maxN - n + 1); s1.value = f; s2.value = maxN; wkFrom = f; wkTo = maxN; }
+  wkPreset = n;
+  document.querySelectorAll('.wf-btn').forEach(b => b.classList.remove('ac'));
+  el.classList.add('ac');
+  const nums = _allNums;
+  if (!nums.length) return;
+  const maxN = Math.max(...nums), minN = Math.min(...nums);
+  if (n === 0) { wkFrom = null; wkTo = null; }
+  else { wkFrom = Math.max(minN, maxN - n + 1); wkTo = maxN; }
   refreshDetail();
 }
 

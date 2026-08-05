@@ -1,8 +1,8 @@
-// /api/chat.js — Vercel Serverless Function
+// /api/chat.js — Vercel Serverless Function (CommonJS)
 // Proxies chat requests to Groq (llama-3.3-70b-versatile).
 // Requires env var: GROQ_API_KEY
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -47,4 +47,4 @@ export default async function handler(req, res) {
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
-}
+};

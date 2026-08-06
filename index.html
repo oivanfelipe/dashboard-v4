@@ -455,9 +455,9 @@ function parseSheetRows(values) {
     const fim  = colMapR.fim     !== undefined ? (row[colMapR.fim]     || '') : '';
     const sem  = colMapR.semana  !== undefined ? (row[colMapR.semana]  || '') : '';
 
-    if (mes) obj._week = mes;
-    else if (ini && fim) obj._week = fDate(ini) + ' – ' + fDate(fim);
+    if (ini && fim) obj._week = fDate(ini) + ' – ' + fDate(fim);
     else if (sem) obj._week = String(sem).replace(/\.0$/, '');
+    else if (mes) obj._week = mes;
     else obj._week = `#${i}`;
 
     obj._semNum = pNum(sem) || pNum(mes) || null;

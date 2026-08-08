@@ -1,24 +1,27 @@
 // /api/chat.js — Vercel Serverless Function (CommonJS)
-// Proxies chat requests to Groq (llama-3.3-70b-versatile).
-// Requires env var: GROQ_API_KEY
+// Proxies multi-turn chat to Groq (llama-3.3-70b-versatile).
+// Accepts: { messages: [{role, content}] } OR legacy { prompt: string }
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const groqKey = process.env.GROQ_API_KEY;
-  if (!groqKey) {
-    return res.status(500).json({ error: 'GROQ_API_KEY not configured' });
-  }
+  if (!groqKey) return res.status(500).json({ error: 'GROQ_API_KEY not configured' });
 
-  const { prompt } = req.body || {};
-  if (!prompt) {
-    return res.status(400).json({ error: 'prompt required in body' });
+  const { messages, prompt } = req.body || {};
+
+  // Support both multi-turn messages array and legacy single prompt
+  let msgs;
+  if (messages && Array.isArray(messages)) {
+    msgs = messages;
+  } else if (prompt) {
+    msgs = [{ role: 'user', content: prompt }];
+  } else {
+    return res.status(400).json({ error: 'messages or prompt required' });
   }
 
   try {
@@ -30,9 +33,9 @@ module.exports = async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'llama-3.3-70b-versatile',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 500,
-        temperature: 0.3,
+        messages: msgs,
+        max_tokens: 600,
+        temperature: 0.2,
       }),
     });
 

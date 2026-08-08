@@ -285,6 +285,7 @@ tr.hi td{color:var(--white);font-weight:700;background:var(--red-soft);}
       <div class="chat-head-title">Analista V4</div>
       <div class="chat-head-sub" id="chat-ctx">Selecione um cliente</div>
     </div>
+    <button class="chat-close" title="Limpar histórico" onclick="clearChatHistory()" style="font-size:13px;margin-right:4px">↺</button>
     <button class="chat-close" onclick="toggleChat()">×</button>
   </div>
   <div class="chat-sugs" id="chat-sugs"></div>
@@ -385,6 +386,7 @@ let showProj = false;
 let activeMetrics = new Set(['investimento','leads']);
 let mainChart = null, chartTimer = null;
 let chatOpen = false;
+let chatHistory = {}; // keyed by contextKey → [{role, content}]
 
 // ══════════════════════════════════════════
 // Format helpers
@@ -900,8 +902,33 @@ function fmtForAIOverview() {
   return lines.join('\n');
 }
 
+function clearChatHistory() {
+  const key = getChatKey();
+  chatHistory[key] = [];
+  const msgsEl = document.getElementById('chat-msgs');
+  msgsEl.innerHTML = '<div class="chat-empty"><strong>Histórico limpo</strong>Nova conversa iniciada.</div>';
+}
 function useSug(text) { document.getElementById('chat-input').value = text; sendChat(); }
 function chatKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } }
+
+function calcDerived(row) {
+  const inv = row._investimento, leads = row._leads, cliques = row._cliques,
+        alcance = row._alcance, vendas = row._vendas, mql = row._mql, sql = row._sql;
+  const derived = [];
+  if (cliques != null && alcance != null && alcance > 0)
+    derived.push(`CTR: ${(cliques / alcance * 100).toFixed(2)}%`);
+  if (inv != null && vendas != null && vendas > 0)
+    derived.push(`CPA: R$ ${(inv / vendas).toFixed(0)}`);
+  if (inv != null && leads != null && leads > 0 && row._cpl == null)
+    derived.push(`CPL calc.: R$ ${(inv / leads).toFixed(0)}`);
+  if (leads != null && vendas != null && leads > 0)
+    derived.push(`Conv. Lead→Venda: ${(vendas / leads * 100).toFixed(1)}%`);
+  if (leads != null && mql != null && leads > 0)
+    derived.push(`Taxa MQL: ${(mql / leads * 100).toFixed(1)}%`);
+  if (mql != null && sql != null && mql > 0)
+    derived.push(`Taxa SQL: ${(sql / mql * 100).toFixed(1)}%`);
+  return derived;
+}
 
 function fmtForAI(rows) {
   if (!rows.length) return 'Nenhum dado disponível.';
@@ -910,16 +937,55 @@ function fmtForAI(rows) {
   const metaKey = viewMode === 'mensal' ? '_metaMen' : '_metaSem';
   let metaVal = null;
   for (let i = rows.length - 1; i >= 0; i--) { if (rows[i][metaKey] != null) { metaVal = rows[i][metaKey]; break; } }
+
+  // Raw metrics with delta vs previous
   const summary = avail.map(m => {
     const v = last[`_${m.k}`], p = prev?.[`_${m.k}`];
     if (v == null) return null;
     const delta = p && p !== 0 ? ((v - p) / p * 100).toFixed(1) + '%' : null;
-    return `${m.l}: ${m.f(v)}${delta ? ` (${Number(delta) > 0 ? '+' : ''}${delta} vs anterior)` : ''}`;
+    return `${m.l}: ${m.f(v)}${delta ? ` (${Number(delta) > 0 ? '+' : ''}${delta} vs semana anterior)` : ''}`;
   }).filter(Boolean);
-  const metaLine = metaVal != null ? `Meta ${viewMode === 'mensal' ? 'Mensal' : 'Semanal'} Geral: ${fInt(metaVal)}` : null;
+
+  // Derived metrics for last week
+  const derived = calcDerived(last);
+  const derivedPrev = prev ? calcDerived(prev) : [];
+
+  // Meta
+  const metaLine = metaVal != null ? `Meta ${viewMode === 'mensal' ? 'Mensal' : 'Semanal'} Geral: ${fInt(metaVal)}${last._leads != null ? ` | Leads atingidos: ${((last._leads / metaVal) * 100).toFixed(1)}% da meta` : ''}` : null;
+
+  // History table (last 16 rows)
   const header = 'Período | ' + avail.map(m => m.l).join(' | ') + (metaVal != null ? ' | Meta' : '');
-  const sample = rows.slice(-12).map(r => [r._week, ...avail.map(m => m.f(r[`_${m.k}`])), ...(metaVal != null ? [fInt(r[metaKey])] : [])].join(' | '));
-  return `Última semana:\n${summary.join('\n')}${metaLine ? '\n' + metaLine : ''}\n\nHistórico (últimas ${sample.length} semanas):\n${header}\n${sample.join('\n')}`;
+  const sample = rows.slice(-16).map(r => {
+    const d = calcDerived(r);
+    const extra = d.length ? ` [${d.join(', ')}]` : '';
+    return [r._week, ...avail.map(m => m.f(r[`_${m.k}`])), ...(metaVal != null ? [fInt(r[metaKey])] : [])].join(' | ') + extra;
+  });
+
+  return [
+    '== ÚLTIMA SEMANA ==',
+    ...summary,
+    ...(derived.length ? ['', 'Métricas calculadas:', ...derived.map(d => `  ${d}`)] : []),
+    ...(metaLine ? ['', metaLine] : []),
+    '',
+    `== HISTÓRICO (${sample.length} períodos) ==`,
+    header,
+    ...sample,
+  ].join('\n');
+}
+
+function getChatKey() { return activeId ? `${activeId}_${channel}_${viewMode}` : 'overview'; }
+
+function buildSystemPrompt(ctx) {
+  return `Você é um analista sênior de tráfego pago da V4 Company. Suas regras:
+1. USE APENAS os dados fornecidos — nunca invente números
+2. CALCULE e mencione CTR, CPA, taxa de conversão e outras métricas derivadas quando os dados permitirem
+3. COMPARE com períodos anteriores usando o histórico
+4. IDENTIFIQUE tendências, anomalias e gargalos no funil
+5. SEJA ESPECÍFICO: cite os valores exatos dos dados
+6. Responda em português, de forma objetiva. Máximo 280 palavras.
+
+DADOS DISPONÍVEIS:
+${ctx}`;
 }
 
 async function sendChat() {
@@ -934,43 +1000,44 @@ async function sendChat() {
   msgsEl.innerHTML += `<div class="chat-msg ai" id="${thinkId}"><div class="thinking"><span></span><span></span><span></span></div></div>`;
   msgsEl.scrollTop = msgsEl.scrollHeight;
 
+  const ctxKey = getChatKey();
+  if (!chatHistory[ctxKey]) chatHistory[ctxKey] = [];
+
   try {
-    let prompt;
+    let systemContent;
     if (!activeId) {
-      // Overview: consolidate all clients
       const ctx = fmtForAIOverview();
-      prompt = `Você é um analista sênior de tráfego pago da V4 Company. Analise a performance consolidada de múltiplos clientes e responda de forma direta e objetiva com base nos dados.
-
-DADOS DOS CLIENTES (última semana disponível):
-${ctx}
-
-PERGUNTA: ${question}
-
-Responda em português, de forma concisa. Compare clientes quando relevante. Máximo 250 palavras.`;
+      systemContent = `Você é um analista sênior de tráfego pago da V4 Company. Regras: use apenas os dados fornecidos, calcule CTR/CPA/taxas quando possível, compare clientes entre si, cite números exatos. Máximo 280 palavras.\n\nDADOS CONSOLIDADOS (todos os clientes, última semana):\n${ctx}`;
     } else {
       const c = clients.find(x => x.id === activeId);
       const rows = getActiveRows();
       const chLabel = { geral: 'Geral (todos os canais)', meta: 'Meta Ads', google: 'Google Ads' };
       const ctx = fmtForAI(rows);
-      prompt = `Você é um analista sênior de tráfego pago da V4 Company, especialista em diagnóstico de performance e otimização de mídia paga. Seja direto, objetivo e baseado em dados. Foque em insights acionáveis.
-
-CONTEXTO:
-- Cliente: ${c?.name}
-- Canal: ${chLabel[channel]}
-- Período: ${rows.length} semanas (${rows[0]?._week || '?'} a ${rows[rows.length - 1]?._week || '?'})
-
-DADOS:
-${ctx}
-
-PERGUNTA: ${question}
-
-Responda em português, de forma concisa. Use dados concretos. Máximo 200 palavras.`;
+      systemContent = buildSystemPrompt(`Cliente: ${c?.name} | Canal: ${chLabel[channel]} | ${rows.length} períodos (${rows[0]?._week || '?'} → ${rows[rows.length-1]?._week || '?'})\n\n${ctx}`);
     }
 
-    const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
+    // Build messages: system + last 8 history turns + new question
+    const history = chatHistory[ctxKey].slice(-8);
+    const messages = [
+      { role: 'system', content: systemContent },
+      ...history,
+      { role: 'user', content: question },
+    ];
+
+    const r = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages }),
+    });
     const data = await r.json();
+    const answer = data.response || 'Sem resposta.';
+
+    // Persist to history
+    chatHistory[ctxKey].push({ role: 'user', content: question });
+    chatHistory[ctxKey].push({ role: 'assistant', content: answer });
+
     document.getElementById(thinkId)?.remove();
-    addChatMsg('ai', data.response || 'Sem resposta.');
+    addChatMsg('ai', answer);
   } catch (e) {
     document.getElementById(thinkId)?.remove();
     addChatMsg('ai', 'Erro ao processar: ' + e.message);

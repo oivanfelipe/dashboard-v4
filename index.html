@@ -195,9 +195,27 @@ tr.hi td{color:var(--white);font-weight:700;background:var(--red-soft);}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* ── MOBILE RESPONSIVENESS ─────────────────── */
+.hamburger{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--bg2);border:1px solid var(--border2);color:var(--white);width:38px;height:38px;border-radius:6px;font-size:18px;cursor:pointer;align-items:center;justify-content:center;transition:background .15s;}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:49;}
+@media(max-width:768px){
+  body{overflow-y:auto;}
+  .hamburger{display:flex;}
+  .sb{transform:translateX(-100%);transition:transform .25s ease;z-index:51;}
+  body.sidebar-open .sb{transform:translateX(0);}
+  body.sidebar-open .sb-overlay{display:block;}
+  .main{margin-left:0!important;}
+  .ov-grid{grid-template-columns:1fr;}
+  .dv-header{padding:12px 12px;}
+  .fbar{flex-wrap:wrap;}
+}
 </style>
 </head>
 <body>
+
+<button class="hamburger" onclick="toggleSidebar()" aria-label="Abrir menu">☰</button>
+<div class="sb-overlay" onclick="closeSidebar()"></div>
 
 <!-- Sidebar -->
 <div class="sb">
@@ -326,6 +344,11 @@ tr.hi td{color:var(--white);font-weight:700;background:var(--red-soft);}
 <div class="toast" id="toast"></div>
 
 <script>
+
+// ── Mobile sidebar toggle ──
+function toggleSidebar(){document.body.classList.toggle('sidebar-open');}
+function closeSidebar(){document.body.classList.remove('sidebar-open');}
+
 // ══════════════════════════════════════════
 // Config
 // ══════════════════════════════════════════
@@ -377,6 +400,7 @@ const METRICS = [
 // ══════════════════════════════════════════
 let clients = [];
 let cdata   = {};
+// ⚠️ ATENÇÃO: mova estas credenciais para variáveis de ambiente antes do deploy em produção
 let sbUrl   = 'https://mzwynanvhojzyoirvxkc.supabase.co';
 let sbKey   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16d3luYW52aG9qenlvaXJ2eGtjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5Mjc3NjEsImV4cCI6MjEwMTUwMzc2MX0.UniVWAVDJgyHo8QGlqXjMeTBulsjEDdZ5nyBWowYO2s';
 let view    = 'overview', activeId = null, editId = null;

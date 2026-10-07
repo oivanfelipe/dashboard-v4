@@ -381,6 +381,15 @@ tr:hover td.pcol{background:#1a1a1a;}
       <input class="fi" id="i-sheet" placeholder="1Gne0JUtEnrxCqVygwolRMm27WgPhdLBfMlT2v7ZkQOU"/>
       <div class="fh">Cada cliente = uma planilha, com uma aba por funil (<code>Funil Ecommerce</code>, <code>Funil B2B</code>). Pode colar o link inteiro.</div>
     </div>
+    <div class="fg">
+      <label class="fl">Modelo do cliente</label>
+      <select class="fi" id="i-model">
+        <option value="ecommerce">E-commerce (B2C) — funil com sessões, carrinho, checkout e vendas</option>
+        <option value="b2b">Inside Sales (B2B) — funil com page views e leads</option>
+        <option value="auto">Os dois — mostrar todas as abas de funil</option>
+      </select>
+      <div class="fh">Define quais abas aparecem. Abas por canal (<code>Funil Meta Ads</code>, <code>Funil Google Ads</code>) entram junto com a aba geral do modelo.</div>
+    </div>
     <div class="merr" id="m-err"></div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
@@ -535,19 +544,52 @@ async function sbFetch(path, opts = {}) {
 async function loadClientsFromSupabase() {
   try {
     const rows = await sbFetch('/clients?select=*&order=created_at.asc');
-    clients = (rows || []).map(r => ({ id: r.id, name: r.name, sheetId: r.sheet_id }));
+    clients = (rows || []).map(r => ({ id: r.id, name: r.name, sheetId: r.sheet_id, model: clientModel(r) }));
   } catch (e) {
     console.warn('Supabase load failed:', e.message);
   }
 }
 
-async function insertClientToSupabase(name, sheetId) {
-  const rows = await sbFetch('/clients', { method: 'POST', body: JSON.stringify({ name, sheet_id: sheetId }) });
+// grava com a coluna "model"; se ela ainda não existir no Supabase, grava sem e guarda o modelo só neste navegador
+async function writeClient(method, path, name, sheetId, model) {
+  try {
+    return await sbFetch(path, { method, body: JSON.stringify({ name, sheet_id: sheetId, model }) });
+  } catch (e) {
+    if (!/model/i.test(e.message)) throw e;
+    return await sbFetch(path, { method, body: JSON.stringify({ name, sheet_id: sheetId }) });
+  }
+}
+async function insertClientToSupabase(name, sheetId, model) {
+  const rows = await writeClient('POST', '/clients', name, sheetId, model);
   return rows?.[0];
 }
 
 async function deleteClientFromSupabase(id) {
   await sbFetch(`/clients?id=eq.${id}`, { method: 'DELETE' });
+}
+
+// ══════════════════════════════════════════
+// Modelo do cliente (ecommerce | b2b | auto) e canais das abas
+// ══════════════════════════════════════════
+const MODEL_KEY = 'v4_client_models'; // reserva local caso a coluna "model" ainda não exista no Supabase
+function localModels() { try { return JSON.parse(localStorage.getItem(MODEL_KEY) || '{}'); } catch (e) { return {}; } }
+function saveLocalModel(id, model) { try { const m = localModels(); m[id] = model; localStorage.setItem(MODEL_KEY, JSON.stringify(m)); } catch (e) {} }
+function clientModel(r) { return r.model || localModels()[r.id] || 'auto'; }
+
+// "Funil Meta Ads" → meta | "Funil Google Ads" → google | demais → geral
+function channelOf(title) { return /meta|facebook|instagram/i.test(title) ? 'meta' : /google/i.test(title) ? 'google' : 'geral'; }
+const CH_ORDER = { geral: 0, meta: 1, google: 2 };
+function sortTabs(tabs) {
+  return [...tabs].sort((a, b) => (a.kind === b.kind ? 0 : a.kind === 'ecommerce' ? -1 : 1) || CH_ORDER[channelOf(a.title)] - CH_ORDER[channelOf(b.title)]);
+}
+// uma aba "geral" por funil para a visão geral (a de canal só aparece se não houver geral)
+function overviewTabs(tabs) {
+  const out = [];
+  for (const k of Object.keys(KINDS)) {
+    const ts = tabs.filter(t => t.kind === k);
+    if (ts.length) out.push(ts.find(t => channelOf(t.title) === 'geral') || ts[0]);
+  }
+  return out;
 }
 
 // ══════════════════════════════════════════
@@ -558,8 +600,11 @@ async function loadClient(c) {
     const r = await fetch(`/api/sheet?sheetId=${encodeURIComponent(c.sheetId)}`);
     const payload = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(payload.error || `HTTP ${r.status}`);
-    const tabs = (payload.tabs || []).filter(t => KINDS[t.kind] && t.days?.length);
-    if (!tabs.length) throw new Error('Nenhuma aba de funil diário encontrada — confira o ID e o layout (ver SETUP.md).');
+    const all = (payload.tabs || []).filter(t => KINDS[t.kind] && t.days?.length);
+    const tabs = sortTabs(all.filter(t => !c.model || c.model === 'auto' || t.kind === c.model));
+    if (!tabs.length) throw new Error(all.length
+      ? `A planilha não tem aba de funil ${KINDS[c.model]?.label || ''} — edite o cliente e troque o modelo.`
+      : 'Nenhuma aba de funil diário encontrada — confira o ID e o layout (ver SETUP.md).');
     cdata[c.id] = { tabs, updated: new Date(), error: null };
   } catch (e) {
     cdata[c.id] = { tabs: [], updated: new Date(), error: e.message };
@@ -655,7 +700,7 @@ function setCustomRange() {
   refreshDetail();
 }
 function setGran(g) { gran = g; refreshDetail(); }
-function setTab(title) { tabTitle = title; preset = '30'; rFrom = rTo = null; refreshDetail(); }
+function setTab(title) { tabTitle = title; refreshDetail(); }
 
 // ══════════════════════════════════════════
 // Pills (KPIs do gráfico)
@@ -823,7 +868,7 @@ function renderOverview() {
     const nm = escHtml(c.name);
     if (!d) return `<div class="cl-card"><div class="cl-card-top"><div class="cl-card-name">${nm}</div><span class="badge b-ld">Carregando</span></div><div style="text-align:center;padding:20px"><span class="sp"></span></div></div>`;
     if (d.error) return `<div class="cl-card" onclick="openEdit('${c.id}')"><div class="cl-card-top"><div class="cl-card-name">${nm}</div><span class="badge b-er">Erro</span></div><div style="color:#ff4040;font-size:11px;margin-top:6px">${escHtml(d.error)}</div></div>`;
-    const blocks = d.tabs.map(tab => {
+    const blocks = overviewTabs(d.tabs).map(tab => {
       const kind = KINDS[tab.kind], l = last7(tab);
       const ms = kind.overview.map(k => kind.metrics.find(m => m.k === k));
       return `<div style="margin-top:12px"><div class="cl-card-sub" style="margin:0 0 6px">${kind.label} · ${fDM(l.from)} a ${fDM(l.to)}</div><div class="mtr-g">${ms.map(m => { const v = calc(m, l.cur), p = l.prev ? calc(m, l.prev) : null; return `<div class="mtr"><div class="mtr-l"><span style="width:5px;height:5px;border-radius:50%;background:${m.col};display:inline-block;flex-shrink:0"></span>${m.l}</div><div class="mtr-v">${m.f(v)}</div><div class="mtr-t">${trnd(v, p, m.lb, m.neutral)}</div></div>`; }).join('')}</div></div>`;
@@ -923,7 +968,7 @@ function updateChatCtx() {
   }
   const c = clients.find(x => x.id === activeId);
   const { from, to } = currentRange(tab);
-  document.getElementById('chat-ctx').textContent = `${c?.name || '—'} · ${KINDS[tab.kind].label} · ${fDM(from)} a ${fDM(to)}`;
+  document.getElementById('chat-ctx').textContent = `${c?.name || '—'} · ${tab.title} · ${fDM(from)} a ${fDM(to)}`;
   document.getElementById('chat-sugs').innerHTML = sugs(SUGS[tab.kind]);
 }
 
@@ -944,7 +989,7 @@ function fmtForAIOverview() {
     if (!d || d.error) { lines.push(`${c.name}: sem dados (${d?.error || 'carregando'})`); continue; }
     for (const tab of d.tabs) {
       const kind = KINDS[tab.kind], l = last7(tab);
-      lines.push(`${c.name} · ${kind.label} (${fDM(l.from)} a ${fDM(l.to)}): ${metricLine(kind, l.cur, l.prev).join(' | ')}`);
+      lines.push(`${c.name} · ${kind.label}${channelOf(tab.title) === 'geral' ? '' : ' · ' + tab.title} (${fDM(l.from)} a ${fDM(l.to)}): ${metricLine(kind, l.cur, l.prev).join(' | ')}`);
     }
   }
   return lines.join('\n');
@@ -1012,7 +1057,7 @@ async function sendChat() {
       systemContent = `Você é um analista sênior de tráfego pago da V4 Company. Regras: use apenas os dados fornecidos, compare clientes entre si, cite números exatos. Máximo 280 palavras.\n\nDADOS CONSOLIDADOS (todos os clientes, últimos 7 dias vs 7 anteriores):\n${fmtForAIOverview()}`;
     } else {
       const c = clients.find(x => x.id === activeId);
-      systemContent = buildSystemPrompt(`Cliente: ${c?.name} | Funil: ${KINDS[tab.kind].label}\n\n${fmtForAI(tab)}`);
+      systemContent = buildSystemPrompt(`Cliente: ${c?.name} | Funil: ${KINDS[tab.kind].label} | Aba: ${tab.title}\n\n${fmtForAI(tab)}`);
     }
     const messages = [
       { role: 'system', content: systemContent },
@@ -1056,8 +1101,8 @@ function toast(msg, dur = 2500) {
 // ══════════════════════════════════════════
 // Modal / CRUD
 // ══════════════════════════════════════════
-function openAdd() { editId = null; document.getElementById('m-title').textContent = 'Adicionar Cliente'; document.getElementById('i-name').value = ''; document.getElementById('i-sheet').value = ''; document.getElementById('m-err').style.display = 'none'; document.getElementById('b-del').style.display = 'none'; document.getElementById('modal-ov').classList.add('show'); setTimeout(() => document.getElementById('i-name').focus(), 50); }
-function openEdit(id) { const c = clients.find(x => x.id === id); if (!c) return; editId = id; document.getElementById('m-title').textContent = 'Editar Cliente'; document.getElementById('i-name').value = c.name; document.getElementById('i-sheet').value = c.sheetId; document.getElementById('m-err').style.display = 'none'; document.getElementById('b-del').style.display = ''; document.getElementById('modal-ov').classList.add('show'); }
+function openAdd() { editId = null; document.getElementById('m-title').textContent = 'Adicionar Cliente'; document.getElementById('i-name').value = ''; document.getElementById('i-sheet').value = ''; document.getElementById('i-model').value = 'ecommerce'; document.getElementById('m-err').style.display = 'none'; document.getElementById('b-del').style.display = 'none'; document.getElementById('modal-ov').classList.add('show'); setTimeout(() => document.getElementById('i-name').focus(), 50); }
+function openEdit(id) { const c = clients.find(x => x.id === id); if (!c) return; editId = id; document.getElementById('m-title').textContent = 'Editar Cliente'; document.getElementById('i-name').value = c.name; document.getElementById('i-sheet').value = c.sheetId; document.getElementById('i-model').value = c.model || 'auto'; document.getElementById('m-err').style.display = 'none'; document.getElementById('b-del').style.display = ''; document.getElementById('modal-ov').classList.add('show'); }
 function closeModal() { document.getElementById('modal-ov').classList.remove('show'); }
 function showErr(m) { const e = document.getElementById('m-err'); e.textContent = m; e.style.display = ''; }
 
@@ -1065,18 +1110,20 @@ function showErr(m) { const e = document.getElementById('m-err'); e.textContent 
 function extractSheetId(v) { const m = /\/d\/([a-zA-Z0-9_-]+)/.exec(v); return m ? m[1] : v; }
 
 async function saveClient() {
-  const name = document.getElementById('i-name').value.trim(), sheetId = extractSheetId(document.getElementById('i-sheet').value.trim());
+  const name = document.getElementById('i-name').value.trim(), sheetId = extractSheetId(document.getElementById('i-sheet').value.trim()), model = document.getElementById('i-model').value;
   if (!name) return showErr('Digite o nome do cliente.');
   if (!sheetId) return showErr('Cole o ID da planilha.');
   try {
     if (editId) {
-      await sbFetch(`/clients?id=eq.${editId}`, { method: 'PATCH', body: JSON.stringify({ name, sheet_id: sheetId }) });
+      await writeClient('PATCH', `/clients?id=eq.${editId}`, name, sheetId, model);
       const c = clients.find(x => x.id === editId);
-      if (c) { c.name = name; c.sheetId = sheetId; delete cdata[editId]; }
+      if (c) { c.name = name; c.sheetId = sheetId; c.model = model; delete cdata[editId]; }
+      saveLocalModel(editId, model);
     } else {
-      const row = await insertClientToSupabase(name, sheetId);
+      const row = await insertClientToSupabase(name, sheetId, model);
       const newId = row?.id || Date.now().toString();
-      clients.push({ id: newId, name, sheetId });
+      clients.push({ id: newId, name, sheetId, model });
+      saveLocalModel(newId, model);
     }
     closeModal();
     render();

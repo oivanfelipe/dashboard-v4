@@ -14,6 +14,7 @@ CREATE TABLE clients (
   id         UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name       TEXT NOT NULL,
   sheet_id   TEXT NOT NULL,
+  model      TEXT NOT NULL DEFAULT 'auto',  -- ecommerce | b2b | auto
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -23,6 +24,14 @@ CREATE POLICY "public_access" ON clients FOR ALL USING (true) WITH CHECK (true);
 ```
 
 3. Anote: **Project URL** e **anon public key** (em Settings → API)
+
+---
+
+> Projeto Supabase já existente? Adicione a coluna do modelo do cliente:
+> ```sql
+> ALTER TABLE clients ADD COLUMN IF NOT EXISTS model TEXT NOT NULL DEFAULT 'auto';
+> ```
+> Sem a coluna o dashboard funciona, mas guarda o modelo só no navegador de quem cadastrou.
 
 ---
 
@@ -85,6 +94,7 @@ Modelo: planilha "Touch of Synergy - Funil Diário". Cada aba é um funil:
 |-----|------|----------------|
 | `Funil Ecommerce` (B2C) | e-commerce | Alcance, Impressões, Cliques, Sessões, Add to Cart, Checkout, Vendas, Faturamento, Investimento |
 | `Funil B2B` | inside sales | Alcance, Impressões, Cliques, Page Views (LP), Leads, Investimento |
+| `Funil Meta Ads`, `Funil Google Ads` | mesmo layout do funil do cliente | por canal; aparecem como abas ao lado da aba geral |
 
 - **Um dia por coluna**, com a data `dd/mm/aaaa` na linha de datas. Métricas nas linhas (coluna A = etapa, coluna B = nome da métrica).
 - O tipo da aba é detectado pelas métricas (Faturamento/Vendas → e-commerce; Leads → B2B), não pelo nome. Abas sem linha de datas são ignoradas.
@@ -97,7 +107,7 @@ Modelo: planilha "Touch of Synergy - Funil Diário". Cada aba é um funil:
 
 ## 7. Uso
 
-- Abra a URL e clique **+ Adicionar Cliente**; cole o nome e o link (ou ID) da planilha
+- Abra a URL e clique **+ Adicionar Cliente**; informe o nome, o link (ou ID) da planilha e o **modelo** (E-commerce B2C, Inside Sales B2B ou os dois). O modelo define quais abas aparecem
 - Os clientes ficam salvos no Supabase — qualquer pessoa com o link verá os mesmos
 - Tela do cliente: escolha o funil (abas), o **período** (atalhos ou De/Até) e o agrupamento (dia, semana, mês). KPIs, funil, gráfico de linhas (você escolhe os KPIs) e tabela seguem o período; as variações comparam com o período anterior de mesmo tamanho
 - O chat com IA usa o Groq (llama-3.3-70b) com contexto do período selecionado

@@ -56,3 +56,14 @@ console.log('b2b alcance soma diária junho:', sum(b2b, 'alcance', '2026-06-01',
 console.log('eco  alcance soma diária ago :', sum(eco, 'alcance', '2026-08-01', '2026-08-31'), '(planilha: 4.873)');
 console.log('eco dias:', eco.days.length, '| b2b dias:', b2b.days.length, '| b2b início:', b2b.days[0].date, 'fim:', b2b.days[b2b.days.length - 1].date);
 console.log('OK');
+
+// Planilha com abas por canal: Geral = Meta + Google
+{
+  const ch = require('./fixture-channels.json');
+  const [g, go, me] = ['Funil Ecommerce', 'Funil Google Ads', 'Funil Meta Ads'].map(t => parseGrid(t, ch[t]));
+  for (const t of [g, go, me]) assert.strictEqual(t.kind, 'ecommerce');
+  const tot = (t, k) => t.days.reduce((s, d) => s + (d.v[k] || 0), 0);
+  // sessões vêm do analytics, não fecham por canal
+  for (const k of ['investimento', 'cliques', 'impressoes']) near(tot(go, k) + tot(me, k), tot(g, k), 'geral = google + meta (' + k + ')');
+  console.log('canais OK:', g.days[0].date, '→', g.days[g.days.length - 1].date, '| inv geral', tot(g, 'investimento').toFixed(2));
+}

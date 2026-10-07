@@ -77,12 +77,36 @@ Pronto! Você terá uma URL do tipo `https://v4-dashboard-xxx.vercel.app`
 
 ---
 
-## 6. Uso
+## 6. Layout da planilha (um cliente = uma planilha)
 
-- Abra a URL e clique **+ Adicionar Cliente**
-- Cole o nome e o ID da planilha Google Sheets
+Modelo: planilha "Touch of Synergy - Funil Diário". Cada aba é um funil:
+
+| Aba | Tipo | Métricas lidas |
+|-----|------|----------------|
+| `Funil Ecommerce` (B2C) | e-commerce | Alcance, Impressões, Cliques, Sessões, Add to Cart, Checkout, Vendas, Faturamento, Investimento |
+| `Funil B2B` | inside sales | Alcance, Impressões, Cliques, Page Views (LP), Leads, Investimento |
+
+- **Um dia por coluna**, com a data `dd/mm/aaaa` na linha de datas. Métricas nas linhas (coluna A = etapa, coluna B = nome da métrica).
+- O tipo da aba é detectado pelas métricas (Faturamento/Vendas → e-commerce; Leads → B2B), não pelo nome. Abas sem linha de datas são ignoradas.
+- Só os valores-base são lidos. CTR, CPM, CPC, Connect Rate, CPA, CPL, ROAS etc. são **recalculados** para o período filtrado.
+- As colunas **"Semanal …"** e **"Soma <Mês>"** são ignoradas: são totais, não períodos novos. O dashboard soma sempre a partir dos dias, então semana e fechamento do mês nunca entram em dobro.
+- Dias sem lançamento no fim da planilha (futuros, tudo zerado) são cortados automaticamente.
+- Compartilhe como **"Qualquer pessoa com o link pode ver"**.
+
+---
+
+## 7. Uso
+
+- Abra a URL e clique **+ Adicionar Cliente**; cole o nome e o link (ou ID) da planilha
 - Os clientes ficam salvos no Supabase — qualquer pessoa com o link verá os mesmos
-- O chat com IA usa o Groq (llama-3.3-70b) com contexto dos dados do período selecionado
+- Tela do cliente: escolha o funil (abas), o **período** (atalhos ou De/Até) e o agrupamento (dia, semana, mês). KPIs, funil, gráfico de linhas (você escolhe os KPIs) e tabela seguem o período; as variações comparam com o período anterior de mesmo tamanho
+- O chat com IA usa o Groq (llama-3.3-70b) com contexto do período selecionado
+
+## Testes
+
+```bash
+node test/parse.test.js   # confere o parser contra os totais semanais/mensais da planilha-modelo
+```
 
 ---
 

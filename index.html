@@ -45,7 +45,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 .ov-hd{margin-bottom:24px;}
 .ov-hd-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:.04em;}
 .ov-hd-sub{font-size:11px;color:var(--gray);letter-spacing:.12em;text-transform:uppercase;margin-top:4px;}
-.ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;}
+.ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;}
 .cl-card{background:var(--bg2);border:1px solid var(--border);border-top:2px solid var(--red);border-radius:6px;padding:20px;cursor:pointer;transition:border-color .15s,box-shadow .15s;}
 .cl-card:hover{border-color:rgba(255,255,255,.18);box-shadow:0 8px 40px rgba(0,0,0,.4);}
 .cl-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
@@ -58,7 +58,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 .mtr-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .mtr{padding:10px;background:var(--bg3);border-radius:4px;}
 .mtr-l{font-size:8px;font-weight:700;color:var(--gray2);text-transform:uppercase;letter-spacing:.15em;margin-bottom:4px;display:flex;align-items:center;gap:4px;}
-.mtr-v{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--white);letter-spacing:.03em;line-height:1;}
+.mtr-v{white-space:nowrap;font-family:'Bebas Neue',sans-serif;font-size:19px;color:var(--white);letter-spacing:.03em;line-height:1;}
 .mtr-t{font-size:9px;font-weight:600;margin-top:3px;}
 .up{color:var(--green);}.dn{color:var(--red);}.nt{color:var(--gray2);}
 .empty-state{text-align:center;padding:80px 20px;color:var(--gray);}
@@ -76,27 +76,25 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);min-
 .back-btn:hover{color:var(--white);}
 .topbar-sep{width:1px;height:18px;background:var(--border2);flex-shrink:0;}
 .dv-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.06em;}
-.mode-tgl{display:flex;border:1px solid var(--border2);border-radius:4px;overflow:hidden;}
-.mt-btn{padding:4px 12px;font-size:10px;font-weight:700;cursor:pointer;color:var(--gray);background:transparent;border:none;font-family:'Inter',sans-serif;letter-spacing:.08em;text-transform:uppercase;transition:all .15s;}
-.mt-btn.ac{background:var(--red);color:#fff;}
-.ch-tabs{display:flex;gap:4px;}
-.ch-tab{padding:4px 12px;border-radius:3px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--gray);letter-spacing:.08em;text-transform:uppercase;transition:all .15s;}
-.ch-tab:hover{color:var(--white);}
-.ch-tab.ac{border-color:transparent;color:#fff;}
-.ch-tab.ac[data-ch=geral]{background:var(--red);}
-.ch-tab.ac[data-ch=meta]{background:var(--meta);}
-.ch-tab.ac[data-ch=google]{background:var(--google);}
-.fbar{display:flex;align-items:center;gap:6px;margin-left:auto;}
-.fbar-lbl{font-size:9px;font-weight:700;color:var(--gray2);text-transform:uppercase;letter-spacing:.15em;}
-.wf-btns{display:flex;gap:2px;}
-.wf-btn{padding:3px 8px;border-radius:3px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--gray);letter-spacing:.05em;transition:all .15s;}
-.wf-btn:hover{color:var(--white);}
-.wf-btn.ac{background:var(--red);color:#fff;border-color:var(--red);}
-.wf-sel{padding:3px 7px;border:1px solid var(--border2);border-radius:3px;font-size:10px;color:var(--white);background:var(--bg3);cursor:pointer;font-family:'Inter',sans-serif;}
-.proj-btn{padding:4px 10px;border-radius:3px;border:1px solid var(--border2);font-size:10px;font-weight:700;cursor:pointer;color:var(--gray);background:transparent;letter-spacing:.06em;text-transform:uppercase;transition:all .15s;white-space:nowrap;}
-.proj-btn.ac{background:rgba(100,50,220,.25);color:#a78bfa;border-color:#7c3aed;}
-.ref-btn{padding:4px 10px;border:1px solid var(--border2);border-radius:3px;font-size:12px;cursor:pointer;color:var(--gray);background:transparent;transition:all .15s;}
+.ft-tabs{display:flex;gap:4px;flex-wrap:wrap;}
+.ft-tab{padding:4px 12px;border-radius:3px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--gray);letter-spacing:.08em;text-transform:uppercase;transition:all .15s;font-family:'Inter',sans-serif;}
+.ft-tab:hover{color:var(--white);}
+.ft-tab.ac{background:var(--red);border-color:var(--red);color:#fff;}
+.kind-badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:3px;letter-spacing:.08em;text-transform:uppercase;background:var(--bg3);color:var(--gray);border:1px solid var(--border2);}
+.ref-btn{margin-left:auto;padding:4px 10px;border:1px solid var(--border2);border-radius:3px;font-size:12px;cursor:pointer;color:var(--gray);background:transparent;transition:all .15s;}
 .ref-btn:hover{color:var(--white);}
+
+/* FILTER BAR */
+.filters{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;flex-shrink:0;}
+.fgrp{display:flex;align-items:center;gap:6px;}
+.fbar-lbl{font-size:9px;font-weight:700;color:var(--gray2);text-transform:uppercase;letter-spacing:.15em;}
+.pre-btns{display:flex;gap:2px;flex-wrap:wrap;}
+.pre-btn{padding:4px 9px;border-radius:3px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--gray);letter-spacing:.04em;transition:all .15s;font-family:'Inter',sans-serif;}
+.pre-btn:hover{color:var(--white);}
+.pre-btn.ac{background:var(--red);color:#fff;border-color:var(--red);}
+.date-in{padding:4px 7px;border:1px solid var(--border2);border-radius:3px;font-size:11px;color:var(--white);background:var(--bg3);font-family:'Inter',sans-serif;color-scheme:dark;}
+.date-in:focus{outline:none;border-color:var(--red);}
+.f-info{font-size:10px;color:var(--gray);margin-left:auto;}
 
 /* DETAIL BODY */
 .dv-body{flex:1;overflow-y:auto;padding:20px 24px 120px;min-height:0;}
@@ -129,6 +127,33 @@ td{padding:8px 12px;border-bottom:1px solid var(--border);white-space:nowrap;col
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:rgba(255,255,255,.03);color:var(--white);}
 tr.hi td{color:var(--white);font-weight:700;background:var(--red-soft);}
+
+
+/* Stage groups */
+.stg{margin-bottom:16px;}
+.stg-ttl{font-size:9px;font-weight:700;color:var(--gray2);text-transform:uppercase;letter-spacing:.2em;margin:0 0 8px;}
+.kpi-hero{border-color:var(--border2);}
+.kpi-hero .kpi-value{font-size:30px;white-space:nowrap;}
+#kpi-hero{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));}
+.kpi-value{white-space:nowrap;}
+.kpi-tip{cursor:help;}
+.mp-stage{font-size:8px;font-weight:700;color:var(--gray2);text-transform:uppercase;letter-spacing:.18em;align-self:center;margin:0 4px 0 8px;}
+.mp-stage:first-child{margin-left:0;}
+
+/* Funnel */
+.fn-row{display:grid;grid-template-columns:110px 1fr 120px;gap:12px;align-items:center;margin-bottom:8px;}
+.fn-name{font-size:11px;font-weight:600;color:var(--text2);}
+.fn-bar-wrap{background:var(--bg3);border-radius:3px;height:22px;overflow:hidden;}
+.fn-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--red-deep),var(--red));transition:width .3s;}
+.fn-val{font-size:12px;font-weight:700;text-align:right;}
+.fn-conv{display:block;font-size:9px;font-weight:600;color:var(--gray);}
+.tbl-card td.tot,.tbl-card th.tot{position:sticky;left:0;}
+tr.tot-row td{color:var(--white);font-weight:800;background:var(--red-soft);}
+td.pcol,th.pcol{position:sticky;left:0;background:var(--bg2);z-index:1;}
+th.pcol{background:var(--bg3);z-index:2;}
+tr.tot-row td.pcol{background:#1d0f0e;}
+tr:hover td.pcol{background:#1a1a1a;}
+.note{font-size:10px;color:var(--gray2);margin:-6px 0 14px;line-height:1.5;}
 
 /* CHAT */
 .chat-toggle{position:fixed;bottom:24px;right:24px;z-index:100;width:48px;height:48px;border-radius:50%;background:var(--red);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 24px var(--red-glow);transition:transform .15s;}
@@ -208,7 +233,8 @@ tr.hi td{color:var(--white);font-weight:700;background:var(--red-soft);}
   .main{margin-left:0!important;}
   .ov-grid{grid-template-columns:1fr;}
   .dv-header{padding:12px 12px;}
-  .fbar{flex-wrap:wrap;}
+  .filters{padding:10px 12px;}
+  .fn-row{grid-template-columns:80px 1fr 90px;}
 }
 </style>
 </head>
@@ -236,7 +262,7 @@ tr.hi td{color:var(--white);font-weight:700;background:var(--red-soft);}
 <div class="ov-view show" id="ov-view">
   <div class="ov-hd">
     <div class="ov-hd-title">Visão Geral</div>
-    <div class="ov-hd-sub">Performance consolidada · Última semana</div>
+    <div class="ov-hd-sub">Últimos 7 dias · comparado aos 7 dias anteriores</div>
   </div>
   <div id="ov-grid" class="ov-grid"></div>
   <div class="empty-state" id="ov-empty" style="display:none">
@@ -252,43 +278,66 @@ tr.hi td{color:var(--white);font-weight:700;background:var(--red-soft);}
     <button class="back-btn" onclick="showOverview()">← Voltar</button>
     <div class="topbar-sep"></div>
     <span class="dv-title" id="dv-title"></span>
-    <div class="mode-tgl">
-      <button class="mt-btn ac" id="mt-sem" onclick="setViewMode('semana')">Semana</button>
-      <button class="mt-btn"    id="mt-men" onclick="setViewMode('mensal')">Mês</button>
-    </div>
-    <div class="ch-tabs">
-      <div class="ch-tab ac" data-ch="geral"  onclick="setChannel('geral',this)">Geral</div>
-      <div class="ch-tab"    data-ch="meta"   onclick="setChannel('meta',this)">Meta</div>
-      <div class="ch-tab"    data-ch="google" onclick="setChannel('google',this)">Google</div>
-    </div>
-    <div class="fbar">
-      <span class="fbar-lbl">Período</span>
-      <div class="wf-btns">
-        <div class="wf-btn"    onclick="setPeriod(4,this)">4</div>
-        <div class="wf-btn"    onclick="setPeriod(8,this)">8</div>
-        <div class="wf-btn"    onclick="setPeriod(13,this)">13</div>
-        <div class="wf-btn ac" onclick="setPeriod(0,this)">Tudo</div>
-      </div>
-      <button class="proj-btn" id="proj-btn" onclick="toggleProjected(this)">⬡ Projetado</button>
-    </div>
+    <span class="kind-badge" id="kind-badge"></span>
+    <div class="ft-tabs" id="ft-tabs"></div>
     <button class="ref-btn" onclick="refreshCurrent()" title="Atualizar">↻</button>
   </div>
 
-  <div class="dv-body" id="dv-body">
-    <div class="mpills-wrap">
-      <div class="mpills-label">Métricas no gráfico</div>
-      <div class="mpills" id="mpills"></div>
+  <div class="filters">
+    <div class="fgrp">
+      <span class="fbar-lbl">Período</span>
+      <div class="pre-btns" id="pre-btns">
+        <button class="pre-btn" data-p="7"      onclick="setPreset('7')">7 dias</button>
+        <button class="pre-btn" data-p="14"     onclick="setPreset('14')">14 dias</button>
+        <button class="pre-btn" data-p="30"     onclick="setPreset('30')">30 dias</button>
+        <button class="pre-btn" data-p="mes"    onclick="setPreset('mes')">Mês atual</button>
+        <button class="pre-btn" data-p="mesAnt" onclick="setPreset('mesAnt')">Mês anterior</button>
+        <button class="pre-btn" data-p="all"    onclick="setPreset('all')">Tudo</button>
+      </div>
     </div>
-    <div class="kpi-row" id="kpi-row"></div>
+    <div class="fgrp">
+      <span class="fbar-lbl">De</span><input type="date" class="date-in" id="d-from" onchange="setCustomRange()"/>
+      <span class="fbar-lbl">Até</span><input type="date" class="date-in" id="d-to" onchange="setCustomRange()"/>
+    </div>
+    <div class="fgrp">
+      <span class="fbar-lbl">Agrupar</span>
+      <div class="pre-btns" id="gran-btns">
+        <button class="pre-btn" data-g="dia"    onclick="setGran('dia')">Dia</button>
+        <button class="pre-btn" data-g="semana" onclick="setGran('semana')">Semana</button>
+        <button class="pre-btn" data-g="mes"    onclick="setGran('mes')">Mês</button>
+      </div>
+    </div>
+    <span class="f-info" id="f-info"></span>
+  </div>
+
+  <div class="dv-body" id="dv-body">
+    <div class="kpi-row" id="kpi-hero"></div>
+
     <div class="chart-card">
       <div class="chart-hd">
         <div>
-          <div class="chart-title" id="chart-ttl">Evolução semanal</div>
+          <div class="chart-title" id="chart-ttl">Evolução diária</div>
           <div class="chart-sub"  id="chart-sub"></div>
         </div>
       </div>
+      <div class="mpills-wrap" style="margin-bottom:12px">
+        <div class="mpills-label">KPIs no gráfico</div>
+        <div class="mpills" id="mpills"></div>
+      </div>
       <div class="chart-box" id="chart-box"><canvas id="main-chart"></canvas></div>
     </div>
+
+    <div class="chart-card">
+      <div class="chart-hd"><div>
+        <div class="chart-title">Funil do período</div>
+        <div class="chart-sub" id="funnel-sub"></div>
+      </div></div>
+      <div id="funnel"></div>
+    </div>
+
+    <div id="kpi-stages"></div>
+    <div class="note" id="kpi-note"></div>
+
     <div class="tbl-card"><table><thead id="tbl-head"></thead><tbody id="tbl-body"></tbody></table></div>
   </div>
 </div>
@@ -328,9 +377,18 @@ tr.hi td{color:var(--white);font-weight:700;background:var(--red-soft);}
       <input class="fi" id="i-name" placeholder="Ex: Drogalis, INPOWER…"/>
     </div>
     <div class="fg">
-      <label class="fl">ID da Planilha Google Sheets</label>
+      <label class="fl">Planilha Google Sheets (ID ou link)</label>
       <input class="fi" id="i-sheet" placeholder="1Gne0JUtEnrxCqVygwolRMm27WgPhdLBfMlT2v7ZkQOU"/>
-      <div class="fh">Cole só o ID: docs.google.com/spreadsheets/d/<code>ID_AQUI</code>/edit</div>
+      <div class="fh">Cada cliente = uma planilha, com uma aba por funil (<code>Funil Ecommerce</code>, <code>Funil B2B</code>). Pode colar o link inteiro.</div>
+    </div>
+    <div class="fg">
+      <label class="fl">Modelo do cliente</label>
+      <select class="fi" id="i-model">
+        <option value="ecommerce">E-commerce (B2C) — funil com sessões, carrinho, checkout e vendas</option>
+        <option value="b2b">Inside Sales (B2B) — funil com page views e leads</option>
+        <option value="auto">Os dois — mostrar todas as abas de funil</option>
+      </select>
+      <div class="fh">Define quais abas aparecem. Abas por canal (<code>Funil Meta Ads</code>, <code>Funil Google Ads</code>) entram junto com a aba geral do modelo.</div>
     </div>
     <div class="merr" id="m-err"></div>
     <div class="modal-actions">
@@ -355,45 +413,96 @@ function closeSidebar(){document.body.classList.remove('sidebar-open');}
 Chart.defaults.color = '#9a9a9a';
 Chart.defaults.borderColor = 'rgba(255,255,255,.06)';
 
-const TABS_SEM = {geral:'Acomp_Semana_Geral',  meta:'Acomp_Semana_Meta',  google:'Acomp_Semana_Google'};
-const TABS_MEN = {geral:'Acomp_Mensal_Geral',   meta:'Acomp_Mensal_Meta',  google:'Acomp_Mensal_Google'};
+// ── Formatação ──
+function fCurr(n){return n==null?'—':'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fInt(n){return n==null?'—':Math.round(n).toLocaleString('pt-BR');}
+function fRoas(n){return n==null?'—':n.toFixed(2).replace('.',',')+'x';}
+function fPct(n){return n==null?'—':n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';}
+function fDec(n){return n==null?'—':n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function trnd(curr,prev,lb,neutral){
+  if(curr==null||prev==null||prev===0)return'<span class="nt">—</span>';
+  const p=(curr-prev)/prev*100,up=p>0;
+  if(neutral||Math.abs(p)<0.05)return`<span class="nt">${up?'↑':'↓'} ${Math.abs(p).toFixed(1)}%</span>`;
+  const good=lb?!up:up;
+  return`<span class="${good?'up':'dn'}">${up?'↑':'↓'} ${Math.abs(p).toFixed(1)}%</span>`;
+}
 
-const COLS = {
-  mes:         /^m[eê]s$/i,
-  semana:      /^sem\.?$|^semana$|^week$/i,
-  inicio:      /^inicio$/i,
-  fim:         /^fim$/i,
-  canal:       /^canal$/i,
-  investimento:/^investimento$|^invest$/i,
-  alcance:     /^alcance$|^reach$/i,
-  cliques:     /^cliques?$|^clicks?$/i,
-  leads:       /^leads?$/i,
-  mql:         /^mql$/i,
-  sql:         /^sql$/i,
-  vendas:      /^vendas?$/i,
-  faturamento: /^faturamento$|^revenue$/i,
-  roas:        /^roas$/i,
-  roi:         /^roi$/i,
-  cpl:         /^cpl$|custo.?por.?lead/i,
-  cpc:         /^cpc$/i,
-  metaSem:     /^meta[\s._]?semanal/i,
-  metaMen:     /^meta[\s._]?mensal/i,
-};
+// ── Datas (ISO yyyy-mm-dd, sempre em UTC para não escorregar por fuso) ──
+const DAY = 864e5;
+const WD = ['dom','seg','ter','qua','qui','sex','sáb'];
+const MON = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const toMs = iso => Date.parse(iso + 'T00:00:00Z');
+const fromMs = ms => new Date(ms).toISOString().slice(0, 10);
+const addDays = (iso, n) => fromMs(toMs(iso) + n * DAY);
+const diffDays = (a, b) => Math.round((toMs(b) - toMs(a)) / DAY);
+const fDM = iso => iso.slice(8, 10) + '/' + iso.slice(5, 7);
+const fDMY = iso => fDM(iso) + '/' + iso.slice(0, 4);
+const monthStart = iso => iso.slice(0, 7) + '-01';
+const monthEnd = iso => { const y = +iso.slice(0, 4), m = +iso.slice(5, 7); return fromMs(Date.UTC(y, m, 0)); };
+const mondayOf = iso => { const d = new Date(toMs(iso)).getUTCDay(); return addDays(iso, -((d + 6) % 7)); };
 
-const METRICS = [
-  {k:'investimento', l:'Investimento', f:fCurr, lb:false, col:'#6366f1'},  // indigo
-  {k:'leads',        l:'Leads',        f:fInt,  lb:false, col:'#10b981'},  // emerald
-  {k:'cpl',          l:'CPL',          f:fCurr, lb:true,  col:'#f59e0b'},  // amber
-  {k:'roas',         l:'ROAS',         f:fRoas, lb:false, col:'#0ea5e9'},  // sky blue
-  {k:'mql',          l:'MQL',          f:fInt,  lb:false, col:'#ec4899'},  // pink
-  {k:'sql',          l:'SQL',          f:fInt,  lb:false, col:'#14b8a6'},  // teal
-  {k:'vendas',       l:'Vendas',       f:fInt,  lb:false, col:'#84cc16'},  // lime
-  {k:'faturamento',  l:'Faturamento',  f:fCurr, lb:false, col:'#f97316'},  // orange
-  {k:'roi',          l:'ROI',          f:fPct,  lb:false, col:'#c084fc'},  // purple
-  {k:'alcance',      l:'Alcance',      f:fInt,  lb:false, col:'#94a3b8'},  // slate
-  {k:'cliques',      l:'Cliques',      f:fInt,  lb:false, col:'#06b6d4'},  // cyan
-  {k:'cpc',          l:'CPC',          f:fCurr, lb:true,  col:'#d946ef'},  // fuchsia
+// ══════════════════════════════════════════
+// Métricas
+// Só os valores-base vêm da planilha; taxas e custos são recalculados
+// para qualquer período (somar taxas diárias daria número errado).
+// ══════════════════════════════════════════
+const div = (a, b) => (a == null || b == null || b === 0) ? null : a / b;
+const M = (k, l, f, stage, col, calc, o = {}) => ({ k, l, f, stage, col, calc, lb: !!o.lb, neutral: !!o.neutral, tip: o.tip || '' });
+
+const M_TOPO = [
+  M('alcance',    'Alcance',     fInt, 'Topo de Funil', '#94a3b8', t => t.alcance, { neutral: true, tip: 'Soma do alcance diário (igual ao total da planilha)' }),
+  M('impressoes', 'Impressões',  fInt, 'Topo de Funil', '#6366f1', t => t.impressoes, { neutral: true }),
+  M('ctr',        'CTR',         fPct, 'Topo de Funil', '#a78bfa', t => { const v = div(t.cliques, t.impressoes); return v == null ? null : v * 100; }, { tip: 'Cliques ÷ Impressões' }),
+  M('frequencia', 'Frequência',  fDec, 'Topo de Funil', '#64748b', t => div(t.impressoes, t.alcance), { neutral: true, tip: 'Impressões ÷ Alcance' }),
+  M('cpm',        'CPM',         fCurr,'Topo de Funil', '#f59e0b', t => { const v = div(t.investimento, t.impressoes); return v == null ? null : v * 1000; }, { lb: true, tip: 'Investimento ÷ Impressões × 1000' }),
+  M('cliques',    'Cliques',     fInt, 'Topo de Funil', '#06b6d4', t => t.cliques),
+  M('cpc',        'Custo por Clique', fCurr, 'Topo de Funil', '#d946ef', t => div(t.investimento, t.cliques), { lb: true, tip: 'Investimento ÷ Cliques' }),
 ];
+
+const M_INV = M('investimento', 'Investimento', fCurr, 'Resultados', '#e10600', t => t.investimento, { neutral: true });
+
+const KINDS = {
+  ecommerce: {
+    label: 'B2C · E-commerce',
+    hero: ['investimento', 'faturamento', 'roas', 'vendas', 'cpa'],
+    defaults: ['investimento', 'faturamento'],
+    overview: ['investimento', 'faturamento', 'roas'],
+    funnel: [['impressoes', 'Impressões'], ['cliques', 'Cliques'], ['sessoes', 'Sessões'], ['addToCart', 'Add to Cart'], ['checkout', 'Checkout'], ['vendas', 'Vendas']],
+    metrics: [
+      ...M_TOPO,
+      M('sessoes',        'Sessões',          fInt,  'Meio de Funil', '#14b8a6', t => t.sessoes),
+      M('custoSessao',    'Custo por Sessão', fCurr, 'Meio de Funil', '#f97316', t => div(t.investimento, t.sessoes), { lb: true }),
+      M('connectRate',    'Connect Rate',     fPct,  'Meio de Funil', '#0ea5e9', t => { const v = div(t.sessoes, t.cliques); return v == null ? null : v * 100; }, { tip: 'Sessões ÷ Cliques (mesma conta da planilha; pode passar de 100%)' }),
+      M('addToCart',      'Add to Cart',      fInt,  'Meio de Funil', '#84cc16', t => t.addToCart),
+      M('taxaATC',        'Taxa Add to Cart', fPct,  'Meio de Funil', '#22c55e', t => { const v = div(t.addToCart, t.sessoes); return v == null ? null : v * 100; }, { tip: 'Add to Cart ÷ Sessões' }),
+      M('checkout',       'Checkout',         fInt,  'Fundo de Funil', '#ec4899', t => t.checkout),
+      M('custoCheckout',  'Custo por Checkout', fCurr, 'Fundo de Funil', '#fb7185', t => div(t.investimento, t.checkout), { lb: true }),
+      M('convCheckout',   'Conversão de Checkout', fPct, 'Fundo de Funil', '#c084fc', t => { const v = div(t.vendas, t.checkout); return v == null ? null : v * 100; }, { tip: 'Vendas ÷ Checkout' }),
+      M('convGeral',      'Conversão Geral',  fPct,  'Fundo de Funil', '#2dd4bf', t => { const v = div(t.vendas, t.sessoes); return v == null ? null : v * 100; }, { tip: 'Vendas ÷ Sessões' }),
+      M('cpa',            'CPA',              fCurr, 'Fundo de Funil', '#fbbf24', t => div(t.investimento, t.vendas), { lb: true, tip: 'Investimento ÷ Vendas' }),
+      M('vendas',         'Vendas',           fInt,  'Resultados', '#10b981', t => t.vendas),
+      M('faturamento',    'Faturamento',      fCurr, 'Resultados', '#f97316', t => t.faturamento),
+      M_INV,
+      M('roas',           'ROAS',             fRoas, 'Resultados', '#38bdf8', t => div(t.faturamento, t.investimento), { tip: 'Faturamento ÷ Investimento' }),
+    ],
+  },
+  b2b: {
+    label: 'B2B · Inside Sales',
+    hero: ['investimento', 'leads', 'cpl', 'ctr'],
+    defaults: ['investimento', 'leads'],
+    overview: ['investimento', 'leads', 'cpl'],
+    funnel: [['impressoes', 'Impressões'], ['cliques', 'Cliques'], ['pageViews', 'Page Views (LP)'], ['leads', 'Leads']],
+    metrics: [
+      ...M_TOPO,
+      M('pageViews',       'Page Views (LP)',     fInt,  'Meio de Funil', '#14b8a6', t => t.pageViews),
+      M('custoPageView',   'Custo por Page View', fCurr, 'Meio de Funil', '#f97316', t => div(t.investimento, t.pageViews), { lb: true }),
+      M('connectRate',     'Connect Rate',        fPct,  'Meio de Funil', '#0ea5e9', t => { const v = div(t.pageViews, t.cliques); return v == null ? null : v * 100; }, { tip: 'Page Views ÷ Cliques' }),
+      M('leads',           'Leads',               fInt,  'Resultados', '#10b981', t => t.leads),
+      M('cpl',             'CPL',                 fCurr, 'Resultados', '#fbbf24', t => div(t.investimento, t.leads), { lb: true, tip: 'Investimento ÷ Leads' }),
+      M_INV,
+    ],
+  },
+};
 
 // ══════════════════════════════════════════
 // State
@@ -404,101 +513,13 @@ let cdata   = {};
 let sbUrl   = 'https://mzwynanvhojzyoirvxkc.supabase.co';
 let sbKey   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16d3luYW52aG9qenlvaXJ2eGtjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5Mjc3NjEsImV4cCI6MjEwMTUwMzc2MX0.UniVWAVDJgyHo8QGlqXjMeTBulsjEDdZ5nyBWowYO2s';
 let view    = 'overview', activeId = null, editId = null;
-let channel = 'geral', viewMode = 'semana';
-let wkFrom  = null, wkTo = null, wkPreset = 0;
-let showProj = false;
-let activeMetrics = new Set(['investimento','leads']);
+let tabTitle = null;           // aba (funil) ativa do cliente
+let preset = '30', rFrom = null, rTo = null;   // filtro de datas
+let gran = 'dia';              // dia | semana | mes
+const selMetrics = {};         // por tipo de funil: Set de KPIs no gráfico
 let mainChart = null, chartTimer = null;
 let chatOpen = false;
-let chatHistory = {}; // keyed by contextKey → [{role, content}]
-
-// ══════════════════════════════════════════
-// Format helpers
-// ══════════════════════════════════════════
-function pNum(s){if(s==null||s===''||s==='-'||/^#?N\/A$/i.test(String(s)))return null;const c=String(s).replace(/R\$\s*/g,'').replace(/\./g,'').replace(',','.').replace(/[^\d.\-]/g,'');const n=parseFloat(c);return isNaN(n)?null:n;}
-function fDate(s){if(!s)return'';const d=new Date(s);if(!isNaN(d))return`${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}`;return String(s).slice(0,5);}
-function fCurr(n){return n==null?'—':'R$ '+Math.round(n).toLocaleString('pt-BR');}
-function fInt(n){return n==null?'—':Math.round(n).toLocaleString('pt-BR');}
-function fRoas(n){return n==null?'—':n.toFixed(2)+'x';}
-function fPct(n){return n==null?'—':n.toFixed(1)+'%';}
-function trnd(curr,prev,lb){
-  if(curr==null||prev==null||prev===0)return'<span class="nt">—</span>';
-  const p=(curr-prev)/prev*100,up=p>0,good=lb?!up:up;
-  return`<span class="${good?'up':'dn'}">${up?'↑':'↓'} ${Math.abs(p).toFixed(1)}%</span>`;
-}
-
-// ══════════════════════════════════════════
-// Sheet API parser (raw 2D arrays from Google Sheets API v4)
-// ══════════════════════════════════════════
-function parseSheetRows(values) {
-  // values = [[row0cell0, row0cell1, ...], [row1cell0, ...], ...]
-  if (!values || values.length < 2) return null;
-
-  // Find the header row (col names row)
-  let hIdx = -1;
-  for (let i = 0; i < Math.min(values.length, 15); i++) {
-    const row = values[i];
-    const hasWeek  = row.some(c => /^sem\.?$|^semana$|^week$|^m[eê]s$/i.test((c||'').trim()));
-    const hasLeads = row.some(c => /^leads?$/i.test((c||'').trim()));
-    const hasInvest= row.some(c => /^investimento$|^invest$/i.test((c||'').trim()));
-    if (hasWeek || (hasLeads && hasInvest)) { hIdx = i; break; }
-  }
-  if (hIdx < 0) {
-    // Fallback: row with most COLS matches
-    let bScore = 0, best = 0;
-    for (let i = 0; i < Math.min(values.length, 15); i++) {
-      const s = Object.values(COLS).filter(p => values[i].some(c => p.test((c||'').trim()))).length;
-      if (s > bScore) { bScore = s; best = i; }
-    }
-    if (bScore < 2) return null;
-    hIdx = best;
-  }
-
-  const headers = values[hIdx].map(h => (h||'').trim());
-  const colMapR = {}, colMapP = {};
-  headers.forEach((h, i) => {
-    const clean = h.toLowerCase();
-    if (!clean) return;
-    for (const [key, pat] of Object.entries(COLS)) {
-      if (pat.test(clean)) {
-        if (colMapP[key] === undefined) colMapP[key] = i; // first = Projetado
-        colMapR[key] = i;                                  // last  = Realizado
-        break;
-      }
-    }
-  });
-
-  const dataRows = [];
-  for (let i = hIdx + 1; i < values.length; i++) {
-    const row = values[i];
-    if (!row || row.every(c => !c)) continue;
-
-    const obj = { _raw: row };
-    headers.forEach((h, idx) => { obj[h] = row[idx] || ''; });
-
-    const mes  = colMapR.mes     !== undefined ? (row[colMapR.mes]     || '') : '';
-    const ini  = colMapR.inicio  !== undefined ? (row[colMapR.inicio]  || '') : '';
-    const fim  = colMapR.fim     !== undefined ? (row[colMapR.fim]     || '') : '';
-    const sem  = colMapR.semana  !== undefined ? (row[colMapR.semana]  || '') : '';
-
-    if (ini && fim) obj._week = fDate(ini) + ' – ' + fDate(fim);
-    else if (sem) obj._week = String(sem).replace(/\.0$/, '');
-    else if (mes) obj._week = mes;
-    else obj._week = `#${i}`;
-
-    obj._semNum = pNum(sem) || pNum(mes) || null;
-
-    for (const [key, idx] of Object.entries(colMapR)) obj[`_${key}`] = pNum(row[idx]);
-    for (const [key, idx] of Object.entries(colMapP)) {
-      if (colMapP[key] !== colMapR[key]) obj[`_${key}_p`] = pNum(row[idx]);
-    }
-
-    const hasData = ['investimento','leads','cpl','roas','vendas','faturamento','mql','metaSem','metaMen'].some(k => obj[`_${k}`] != null);
-    if (hasData) dataRows.push(obj);
-  }
-
-  return dataRows.length ? { headers, colMapR, colMapP, rows: dataRows } : null;
-}
+let chatHistory = {};          // contextKey → [{role, content}]
 
 // ══════════════════════════════════════════
 // Supabase helpers
@@ -523,17 +544,23 @@ async function sbFetch(path, opts = {}) {
 async function loadClientsFromSupabase() {
   try {
     const rows = await sbFetch('/clients?select=*&order=created_at.asc');
-    clients = (rows || []).map(r => ({ id: r.id, name: r.name, sheetId: r.sheet_id }));
+    clients = (rows || []).map(r => ({ id: r.id, name: r.name, sheetId: r.sheet_id, model: clientModel(r) }));
   } catch (e) {
     console.warn('Supabase load failed:', e.message);
   }
 }
 
-async function insertClientToSupabase(name, sheetId) {
-  const rows = await sbFetch('/clients', {
-    method: 'POST',
-    body: JSON.stringify({ name, sheet_id: sheetId }),
-  });
+// grava com a coluna "model"; se ela ainda não existir no Supabase, grava sem e guarda o modelo só neste navegador
+async function writeClient(method, path, name, sheetId, model) {
+  try {
+    return await sbFetch(path, { method, body: JSON.stringify({ name, sheet_id: sheetId, model }) });
+  } catch (e) {
+    if (!/model/i.test(e.message)) throw e;
+    return await sbFetch(path, { method, body: JSON.stringify({ name, sheet_id: sheetId }) });
+  }
+}
+async function insertClientToSupabase(name, sheetId, model) {
+  const rows = await writeClient('POST', '/clients', name, sheetId, model);
   return rows?.[0];
 }
 
@@ -542,36 +569,45 @@ async function deleteClientFromSupabase(id) {
 }
 
 // ══════════════════════════════════════════
-// Data loading
+// Modelo do cliente (ecommerce | b2b | auto) e canais das abas
+// ══════════════════════════════════════════
+const MODEL_KEY = 'v4_client_models'; // reserva local caso a coluna "model" ainda não exista no Supabase
+function localModels() { try { return JSON.parse(localStorage.getItem(MODEL_KEY) || '{}'); } catch (e) { return {}; } }
+function saveLocalModel(id, model) { try { const m = localModels(); m[id] = model; localStorage.setItem(MODEL_KEY, JSON.stringify(m)); } catch (e) {} }
+function clientModel(r) { return r.model || localModels()[r.id] || 'auto'; }
+
+// "Funil Meta Ads" → meta | "Funil Google Ads" → google | demais → geral
+function channelOf(title) { return /meta|facebook|instagram/i.test(title) ? 'meta' : /google/i.test(title) ? 'google' : 'geral'; }
+const CH_ORDER = { geral: 0, meta: 1, google: 2 };
+function sortTabs(tabs) {
+  return [...tabs].sort((a, b) => (a.kind === b.kind ? 0 : a.kind === 'ecommerce' ? -1 : 1) || CH_ORDER[channelOf(a.title)] - CH_ORDER[channelOf(b.title)]);
+}
+// uma aba "geral" por funil para a visão geral (a de canal só aparece se não houver geral)
+function overviewTabs(tabs) {
+  const out = [];
+  for (const k of Object.keys(KINDS)) {
+    const ts = tabs.filter(t => t.kind === k);
+    if (ts.length) out.push(ts.find(t => channelOf(t.title) === 'geral') || ts[0]);
+  }
+  return out;
+}
+
+// ══════════════════════════════════════════
+// Data loading — a planilha de cada cliente tem uma aba por funil (B2C / B2B)
 // ══════════════════════════════════════════
 async function loadClient(c) {
   try {
     const r = await fetch(`/api/sheet?sheetId=${encodeURIComponent(c.sheetId)}`);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const payload = await r.json();
-    const allTabs = payload.tabs || {};
-
-    const semana = {}, mensal = {};
-    let anyOk = false;
-
-    for (const [ch, tabName] of Object.entries(TABS_SEM)) {
-      const values = allTabs[tabName] || [];
-      const parsed = values.length ? parseSheetRows(values) : null;
-      semana[ch] = parsed || { headers: [], colMapR: {}, colMapP: {}, rows: [] };
-      if (parsed) anyOk = true;
-    }
-    for (const [ch, tabName] of Object.entries(TABS_MEN)) {
-      const values = allTabs[tabName] || [];
-      const parsed = values.length ? parseSheetRows(values) : null;
-      mensal[ch] = parsed || { headers: [], colMapR: {}, colMapP: {}, rows: [] };
-      if (parsed) anyOk = true;
-    }
-
-    if (!anyOk) throw new Error('Nenhuma métrica encontrada — verifique o ID e se a planilha é pública.');
-    cdata[c.id] = { semana, mensal, updated: new Date(), error: null };
+    const payload = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(payload.error || `HTTP ${r.status}`);
+    const all = (payload.tabs || []).filter(t => KINDS[t.kind] && t.days?.length);
+    const tabs = sortTabs(all.filter(t => !c.model || c.model === 'auto' || t.kind === c.model));
+    if (!tabs.length) throw new Error(all.length
+      ? `A planilha não tem aba de funil ${KINDS[c.model]?.label || ''} — edite o cliente e troque o modelo.`
+      : 'Nenhuma aba de funil diário encontrada — confira o ID e o layout (ver SETUP.md).');
+    cdata[c.id] = { tabs, updated: new Date(), error: null };
   } catch (e) {
-    const empty = { headers: [], colMapR: {}, colMapP: {}, rows: [] };
-    cdata[c.id] = { semana: { geral: { ...empty, error: e.message }, meta: { ...empty }, google: { ...empty } }, mensal: { geral: { ...empty }, meta: { ...empty }, google: { ...empty } }, updated: new Date(), error: e.message };
+    cdata[c.id] = { tabs: [], updated: new Date(), error: e.message };
   }
 }
 
@@ -586,119 +622,146 @@ async function refreshCurrent() {
 }
 
 // ══════════════════════════════════════════
-// Data helpers
+// Agregação — tudo calculado a partir dos dias
+// (as colunas "Semanal" e "Soma Mês" da planilha não entram: são totais, não períodos novos)
 // ══════════════════════════════════════════
-function getModeData() { return activeId && cdata[activeId] ? cdata[activeId][viewMode] : null; }
-function getChannelData() { const md = getModeData(); return md?.[channel] || { rows: [], headers: [], colMapR: {}, colMapP: {} }; }
-function getActiveRows() {
-  const ch = getChannelData(); let rows = ch.rows || [];
-  if (wkFrom !== null) rows = rows.filter(r => r._semNum === null || r._semNum >= wkFrom);
-  if (wkTo   !== null) rows = rows.filter(r => r._semNum === null || r._semNum <= wkTo);
-  return rows;
+function curTab() {
+  const d = activeId && cdata[activeId];
+  if (!d || !d.tabs.length) return null;
+  return d.tabs.find(t => t.title === tabTitle) || d.tabs[0];
 }
-function getAvailMetrics(rows) { return METRICS.filter(m => rows.some(r => r[`_${m.k}`] != null)); }
+const tabBounds = t => ({ min: t.days[0].date, max: t.days[t.days.length - 1].date });
+
+function sumDays(days, keys) {
+  const t = {};
+  for (const k of keys) {
+    let s = null;
+    for (const d of days) { const v = d.v[k]; if (v != null) s = (s || 0) + v; }
+    t[k] = s;
+  }
+  return t;
+}
+function totalsFor(tab, from, to) {
+  const days = tab.days.filter(d => d.date >= from && d.date <= to);
+  return { days, t: sumDays(days, tab.metrics) };
+}
+const calc = (m, t) => m.calc(t);
+
+function currentRange(tab) {
+  const { min, max } = tabBounds(tab);
+  let from = rFrom, to = rTo;
+  if (preset !== 'custom') {
+    to = max;
+    if (preset === 'all') from = min;
+    else if (preset === 'mes') { from = monthStart(max); }
+    else if (preset === 'mesAnt') { const pm = addDays(monthStart(max), -1); from = monthStart(pm); to = pm; }
+    else from = addDays(max, -(parseInt(preset, 10) - 1));
+  }
+  from = from || min; to = to || max;
+  if (from > to) [from, to] = [to, from];
+  if (from < min) from = min;
+  if (to > max) to = max;
+  if (from > to) from = to;
+  return { from, to };
+}
+// período anterior de mesmo tamanho; só vale se estiver inteiro dentro dos dados
+function prevRange(tab, from, to) {
+  const n = diffDays(from, to) + 1;
+  const pTo = addDays(from, -1), pFrom = addDays(pTo, -(n - 1));
+  return pFrom >= tabBounds(tab).min ? { from: pFrom, to: pTo } : null;
+}
+
+// agrupa dias em baldes (dia / semana ISO / mês)
+function buckets(days, g) {
+  const map = new Map();
+  for (const d of days) {
+    const key = g === 'dia' ? d.date : g === 'semana' ? mondayOf(d.date) : d.date.slice(0, 7);
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(d);
+  }
+  return [...map.entries()].map(([key, ds]) => {
+    const a = ds[0].date, b = ds[ds.length - 1].date;
+    let label;
+    if (g === 'dia') label = `${WD[new Date(toMs(a)).getUTCDay()]} ${fDM(a)}`;
+    else if (g === 'semana') label = `${fDM(a)}–${fDM(b)}`;
+    else label = (a === monthStart(a) && b === monthEnd(a)) ? `${MON[+a.slice(5, 7) - 1]}/${a.slice(2, 4)}` : `${fDM(a)}–${fDM(b)}`;
+    return { key, label, from: a, to: b, days: ds };
+  });
+}
 
 // ══════════════════════════════════════════
-// Week selects
+// Filtro de datas
 // ══════════════════════════════════════════
-let _allNums = []; // cached period numbers for setPeriod
-function populateWkSelects() {
-  const md = getModeData(); const allRows = [];
-  if (md) for (const ch of Object.values(md)) { if (ch.rows) allRows.push(...ch.rows); }
-  const nums = [...new Set(allRows.map(r => r._semNum).filter(n => n !== null))].sort((a,b) => a - b);
-  _allNums = nums;
-  if (nums.length) {
-    const minN = nums[0], maxN = nums[nums.length - 1];
-    if (wkPreset > 0) { const f = Math.max(minN, maxN - wkPreset + 1); wkFrom = f; wkTo = maxN; }
-    else { wkFrom = null; wkTo = null; }
-  }
-}
-function setPeriod(n, el) {
-  wkPreset = n;
-  document.querySelectorAll('.wf-btn').forEach(b => b.classList.remove('ac'));
-  el.classList.add('ac');
-  const nums = _allNums;
-  if (!nums.length) return;
-  const maxN = Math.max(...nums), minN = Math.min(...nums);
-  if (n === 0) { wkFrom = null; wkTo = null; }
-  else { wkFrom = Math.max(minN, maxN - n + 1); wkTo = maxN; }
+function setPreset(p) { preset = p; refreshDetail(); }
+function setCustomRange() {
+  const f = document.getElementById('d-from').value, t = document.getElementById('d-to').value;
+  if (!f || !t) return;
+  preset = 'custom'; rFrom = f; rTo = t;
   refreshDetail();
 }
+function setGran(g) { gran = g; refreshDetail(); }
+function setTab(title) { tabTitle = title; refreshDetail(); }
 
 // ══════════════════════════════════════════
-// Pills
+// Pills (KPIs do gráfico)
 // ══════════════════════════════════════════
-function buildPills(rows) {
-  const avail = getAvailMetrics(rows);
-  if (!avail.length) { document.getElementById('mpills').innerHTML = ''; return; }
-  const availKeys = new Set(avail.map(m => m.k));
-  activeMetrics = new Set([...activeMetrics].filter(k => availKeys.has(k)));
-  if (activeMetrics.size === 0) activeMetrics.add(avail[0].k);
-  document.getElementById('mpills').innerHTML = avail.map(m => {
-    const on = activeMetrics.has(m.k);
+function activeSet(kind) {
+  const defs = KINDS[kind];
+  if (!selMetrics[kind]) selMetrics[kind] = new Set(defs.defaults);
+  return selMetrics[kind];
+}
+function buildPills(tab) {
+  const kind = KINDS[tab.kind], act = activeSet(tab.kind);
+  let html = '', stage = '';
+  for (const m of kind.metrics) {
+    if (m.stage !== stage) { stage = m.stage; html += `<span class="mp-stage">${stage.replace(' de Funil', '')}</span>`; }
+    const on = act.has(m.k);
     const s = on ? `background:${m.col};color:#fff;border-color:${m.col}` : `color:${m.col};border-color:${m.col}40;background:${m.col}12`;
-    return `<div class="mpill" style="${s}" onclick="toggleMetric('${m.k}',this)" data-key="${m.k}">${m.l}</div>`;
-  }).join('');
+    html += `<div class="mpill" style="${s}" onclick="toggleMetric('${m.k}')">${m.l}</div>`;
+  }
+  document.getElementById('mpills').innerHTML = html;
 }
-function toggleMetric(key, el) {
-  if (activeMetrics.has(key)) { if (activeMetrics.size <= 1) return; activeMetrics.delete(key); const m = METRICS.find(x => x.k === key); el.style.cssText = `color:${m.col};border-color:${m.col}40;background:${m.col}12`; }
-  else { activeMetrics.add(key); const m = METRICS.find(x => x.k === key); el.style.cssText = `background:${m.col};color:#fff;border-color:${m.col}`; }
-  scheduleChart();
+function toggleMetric(key) {
+  const tab = curTab(); if (!tab) return;
+  const act = activeSet(tab.kind);
+  if (act.has(key)) { if (act.size <= 1) return; act.delete(key); } else act.add(key);
+  buildPills(tab); scheduleChart();
 }
 
 // ══════════════════════════════════════════
-// Chart
+// Gráfico
 // ══════════════════════════════════════════
-function scheduleChart() { if (chartTimer) clearTimeout(chartTimer); chartTimer = setTimeout(() => { renderChart(getActiveRows()); chartTimer = null; }, 60); }
+function scheduleChart() { if (chartTimer) clearTimeout(chartTimer); chartTimer = setTimeout(() => { renderChart(); chartTimer = null; }, 60); }
 
-function renderChart(rows) {
+function renderChart() {
   const box = document.getElementById('chart-box');
   if (mainChart) { mainChart.destroy(); mainChart = null; }
-  if (!rows.length) { box.innerHTML = '<div class="no-data">Sem dados para o período</div>'; return; }
+  const tab = curTab(); if (!tab) return;
+  const { from, to } = currentRange(tab);
+  const bks = buckets(totalsFor(tab, from, to).days, gran);
+  if (!bks.length) { box.innerHTML = '<div class="no-data">Sem dados para o período</div>'; return; }
   if (!box.querySelector('canvas')) box.innerHTML = '<canvas id="main-chart"></canvas>';
   const ctx = document.getElementById('main-chart').getContext('2d');
-  const labels = rows.map(r => r._week);
+  const kind = KINDS[tab.kind], act = activeSet(tab.kind);
+  const labels = bks.map(b => b.label);
+  const ser = kind.metrics.filter(m => act.has(m.k)).map(m => {
+    const raw = bks.map(b => calc(m, sumDays(b.days, tab.metrics)));
+    return { m, raw, mx: Math.max(0, ...raw.filter(v => v != null).map(Math.abs)) || 1 };
+  });
+  if (!ser.length) return;
 
-  // Compute per-metric max to detect scale divergence
-  const keys = [...activeMetrics];
-  const metaMap = {};
-  for (const key of keys) {
-    const m = METRICS.find(x => x.k === key); if (!m) continue;
-    const vals = rows.map(r => r[`_${key}`]).filter(v => v != null);
-    if (!vals.length) continue;
-    const mx = Math.max(...vals.map(Math.abs)) || 1;
-    metaMap[key] = { m, mx, vals };
-  }
-  const validKeys = Object.keys(metaMap);
-  if (!validKeys.length) return;
-
-  // Normalize when scales differ by more than 10×
-  const maxOfMaxes = Math.max(...validKeys.map(k => metaMap[k].mx));
-  const minOfMaxes = Math.min(...validKeys.map(k => metaMap[k].mx));
-  const needsNorm  = validKeys.length > 1 && (maxOfMaxes / minOfMaxes) > 10;
-
-  const datasets = [];
-  for (const key of validKeys) {
-    const { m, mx } = metaMap[key];
-    const rawData = rows.map(r => r[`_${key}`]);
-    const chartData = needsNorm
-      ? rawData.map(v => v == null ? null : (v / mx) * 100)
-      : rawData;
-    datasets.push({
-      label: m.l, data: chartData,
-      borderColor: m.col, backgroundColor: m.col + '18',
-      tension: .4, fill: activeMetrics.size === 1,
-      pointRadius: 3, pointHoverRadius: 5, borderWidth: 2,
-      _raw: rawData, _fmt: m.f, _norm: needsNorm,
-    });
-    if (showProj) {
-      const dp = rows.map(r => r[`_${key}_p`]);
-      if (dp.some(v => v != null)) {
-        const dpChart = needsNorm ? dp.map(v => v == null ? null : (v / mx) * 100) : dp;
-        datasets.push({ label: m.l + ' Proj.', data: dpChart, borderColor: m.col, borderDash: [5,4], tension: .4, fill: false, pointRadius: 2, borderWidth: 1.5, pointStyle: 'triangle', _raw: dp, _fmt: m.f, _norm: needsNorm });
-      }
-    }
-  }
+  // escalas muito diferentes (ex.: faturamento x ROAS) → normaliza em % do máximo de cada série
+  const mxs = ser.map(s => s.mx);
+  const needsNorm = ser.length > 1 && Math.max(...mxs) / Math.min(...mxs) > 10;
+  const small = bks.length > 45;
+  const datasets = ser.map(s => ({
+    label: s.m.l,
+    data: needsNorm ? s.raw.map(v => v == null ? null : v / s.mx * 100) : s.raw,
+    borderColor: s.m.col, backgroundColor: s.m.col + '18',
+    tension: .25, cubicInterpolationMode: 'monotone', fill: ser.length === 1, spanGaps: false,
+    pointRadius: small ? 0 : 3, pointHoverRadius: 5, borderWidth: 2,
+    _raw: s.raw, _fmt: s.m.f,
+  }));
 
   mainChart = new Chart(ctx, { type: 'line', data: { labels, datasets }, options: {
     responsive: true, maintainAspectRatio: false,
@@ -709,101 +772,66 @@ function renderChart(rows) {
         backgroundColor: '#1f1f1f', borderColor: 'rgba(255,255,255,.1)', borderWidth: 1,
         titleColor: '#fff', bodyColor: '#b8b8b8',
         callbacks: {
-          label(c) {
-            const raw = c.dataset._raw?.[c.dataIndex];
-            const fmt = c.dataset._fmt;
-            const v = raw != null && fmt ? fmt(raw) : c.raw;
-            return ` ${c.dataset.label}: ${v}`;
-          },
-          afterTitle: needsNorm ? () => '(normalizado — escala relativa)' : undefined,
-        }
-      }
+          label(c) { const raw = c.dataset._raw?.[c.dataIndex]; return ` ${c.dataset.label}: ${raw != null ? c.dataset._fmt(raw) : '—'}`; },
+          afterTitle: needsNorm ? () => '(escala relativa — cada KPI em % do seu máximo)' : undefined,
+        },
+      },
     },
     scales: {
-      x: { ticks: { font: { size: 9 }, maxRotation: 35, maxTicksLimit: 16, color: '#6b6b6b' }, grid: { color: 'rgba(255,255,255,.04)' } },
+      x: { ticks: { font: { size: 9 }, maxRotation: 45, autoSkip: true, maxTicksLimit: 18, color: '#6b6b6b' }, grid: { color: 'rgba(255,255,255,.04)' } },
       y: {
-        ticks: {
-          font: { size: 9 }, color: '#6b6b6b',
-          callback: needsNorm
-            ? v => v.toFixed(0) + '%'
-            : v => Math.abs(v) >= 1000 ? (v/1000).toFixed(0)+'k' : v
-        },
-        grid: { color: 'rgba(255,255,255,.05)' }
-      }
-    }
+        beginAtZero: true,
+        ticks: { font: { size: 9 }, color: '#6b6b6b', callback: needsNorm ? v => v.toFixed(0) + '%' : v => Math.abs(v) >= 1000 ? (v / 1000).toFixed(0) + 'k' : v },
+        grid: { color: 'rgba(255,255,255,.05)' },
+      },
+    },
   }});
 }
 
 // ══════════════════════════════════════════
-// KPIs
+// KPIs, funil e tabela
 // ══════════════════════════════════════════
-function renderKPIs(rows) {
-  const last = rows[rows.length - 1], prev = rows.length > 1 ? rows[rows.length - 2] : null;
-  if (!last) { document.getElementById('kpi-row').innerHTML = ''; return; }
-
-  // Meta card (semanal ou mensal conforme viewMode)
-  const metaKey = viewMode === 'mensal' ? '_metaMen' : '_metaSem';
-  const metaLabel = viewMode === 'mensal' ? 'Meta Mensal' : 'Meta Semanal';
-  // Aggregate meta across all rows (take the most recent non-null)
-  let metaVal = null;
-  for (let i = rows.length - 1; i >= 0; i--) {
-    if (rows[i][metaKey] != null) { metaVal = rows[i][metaKey]; break; }
-  }
-
-  // Determine which metric to compare against meta (first available financial metric)
-  const compareKeys = ['leads','faturamento','vendas','investimento'];
-  let compareM = null, compareV = null;
-  for (const k of compareKeys) {
-    if (last[`_${k}`] != null) { compareM = METRICS.find(m => m.k === k); compareV = last[`_${k}`]; break; }
-  }
-
-  const avail = METRICS.filter(m => last[`_${m.k}`] != null);
-  let metaCard = '';
-  if (metaVal != null) {
-    const pct = compareV != null ? Math.min((compareV / metaVal) * 100, 200) : null;
-    const pctDisplay = pct != null ? pct.toFixed(1) + '%' : '—';
-    const pctColor = pct == null ? 'var(--gray2)' : pct >= 100 ? 'var(--green)' : pct >= 70 ? 'var(--amber)' : '#ff4040';
-    const barW = pct != null ? Math.min(pct, 100) : 0;
-    const compareInfo = compareM ? `<div style="font-size:9px;color:var(--gray2);margin-top:3px">${compareM.l}: ${compareM.f(compareV)}</div>` : '';
-    metaCard = `<div class="kpi-card" style="grid-column:1/-1;display:flex;align-items:center;gap:20px;padding:14px 18px;">
-      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#facc15"></div>
-      <div style="flex:0 0 auto">
-        <div class="kpi-label"><span style="width:6px;height:6px;border-radius:50%;background:#facc15;display:inline-block;flex-shrink:0"></span>${metaLabel}</div>
-        <div class="kpi-value" style="font-size:22px">${fInt(metaVal)}</div>
-        ${compareInfo}
-      </div>
-      <div style="flex:1;min-width:120px">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
-          <span style="font-size:9px;color:var(--gray2);text-transform:uppercase;letter-spacing:.12em">Progresso</span>
-          <span style="font-size:16px;font-weight:800;font-family:'Bebas Neue',sans-serif;color:${pctColor}">${pctDisplay}</span>
-        </div>
-        <div style="height:6px;background:var(--bg4);border-radius:3px;overflow:hidden">
-          <div style="height:100%;width:${barW}%;background:${pctColor};border-radius:3px;transition:width .4s ease"></div>
-        </div>
-      </div>
-    </div>`;
-  }
-
-  document.getElementById('kpi-row').innerHTML = metaCard + avail.map(m => {
-    const v = last[`_${m.k}`], p = prev?.[`_${m.k}`], vp = last[`_${m.k}_p`];
-    const proj = vp != null && showProj ? `<div class="kpi-proj">Proj: ${m.f(vp)}</div>` : '';
-    return `<div class="kpi-card"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:${m.col}"></div><div class="kpi-label"><span style="width:6px;height:6px;border-radius:50%;background:${m.col};display:inline-block;flex-shrink:0"></span>${m.l}</div><div class="kpi-value">${m.f(v)}</div><div class="kpi-trend">${trnd(v, p, m.lb)}</div>${proj}</div>`;
-  }).join('');
+function kpiCard(m, v, p, hero) {
+  return `<div class="kpi-card${hero ? ' kpi-hero' : ''}${m.tip ? ' kpi-tip' : ''}" ${m.tip ? `title="${escAttr(m.tip)}"` : ''}><div style="position:absolute;top:0;left:0;right:0;height:2px;background:${m.col}"></div><div class="kpi-label"><span style="width:6px;height:6px;border-radius:50%;background:${m.col};display:inline-block;flex-shrink:0"></span>${m.l}</div><div class="kpi-value">${m.f(v)}</div><div class="kpi-trend">${trnd(v, p, m.lb, m.neutral)}</div></div>`;
 }
 
-// ══════════════════════════════════════════
-// Table
-// ══════════════════════════════════════════
-function renderTable(rows) {
-  if (!rows.length) { document.getElementById('tbl-head').innerHTML = ''; document.getElementById('tbl-body').innerHTML = '<tr><td style="padding:20px;color:var(--gray);text-align:center">Sem dados</td></tr>'; return; }
-  const avail = getAvailMetrics(rows);
-  const metaKey = viewMode === 'mensal' ? '_metaMen' : '_metaSem';
-  const hasMeta = rows.some(r => r[metaKey] != null);
-  const metaLbl = viewMode === 'mensal' ? 'Meta Men.' : 'Meta Sem.';
-  document.getElementById('tbl-head').innerHTML = `<tr><th>Período</th>${avail.map(m => `<th>${m.l}</th>`).join('')}${hasMeta ? `<th style="color:#facc15">${metaLbl}</th>` : ''}${showProj ? avail.filter(m => rows.some(r => r[`_${m.k}_p`] != null)).map(m => `<th>${m.l} Proj.</th>`).join('') : ''}</tr>`;
-  document.getElementById('tbl-body').innerHTML = [...rows].reverse().map((row, i) =>
-    `<tr class="${i === 0 ? 'hi' : ''}"><td>${row._week}</td>${avail.map(m => `<td>${m.f(row['_' + m.k])}</td>`).join('')}${hasMeta ? `<td style="color:#facc15;font-weight:600">${fInt(row[metaKey])}</td>` : ''}${showProj ? avail.filter(m => rows.some(r => r[`_${m.k}_p`] != null)).map(m => `<td style="color:#a78bfa">${m.f(row['_' + m.k + '_p'])}</td>`).join('') : ''}</tr>`
+function renderKPIs(tab, cur, prev) {
+  const kind = KINDS[tab.kind];
+  const val = (m, t) => t ? calc(m, t) : null;
+  const heroMs = kind.hero.map(k => kind.metrics.find(m => m.k === k)).filter(Boolean);
+  document.getElementById('kpi-hero').innerHTML = heroMs.map(m => kpiCard(m, val(m, cur), val(m, prev), true)).join('');
+
+  const stages = [];
+  for (const m of kind.metrics) {
+    let g = stages.find(s => s.name === m.stage);
+    if (!g) stages.push(g = { name: m.stage, ms: [] });
+    g.ms.push(m);
+  }
+  document.getElementById('kpi-stages').innerHTML = stages.map(g =>
+    `<div class="stg"><div class="stg-ttl">${g.name}</div><div class="kpi-row" style="margin-bottom:0">${g.ms.map(m => kpiCard(m, val(m, cur), val(m, prev), false)).join('')}</div></div>`
   ).join('');
+}
+
+function renderFunnel(tab, t) {
+  const steps = KINDS[tab.kind].funnel.map(([k, l]) => ({ k, l, v: t[k] }));
+  const mx = Math.max(1, ...steps.map(s => s.v || 0));
+  document.getElementById('funnel').innerHTML = steps.map((s, i) => {
+    const prev = i ? steps[i - 1].v : null;
+    const conv = i && prev ? `${fPct(s.v == null ? null : s.v / prev * 100)} do passo anterior` : '';
+    const w = s.v ? Math.max(3, Math.log10(s.v + 1) / Math.log10(mx + 1) * 100) : 0;
+    return `<div class="fn-row"><div class="fn-name">${s.l}</div><div class="fn-bar-wrap"><div class="fn-bar" style="width:${w}%"></div></div><div class="fn-val">${fInt(s.v)}<span class="fn-conv">${conv}</span></div></div>`;
+  }).join('');
+  document.getElementById('funnel-sub').textContent = 'Barras em escala logarítmica (impressões são ordens de grandeza maiores que as conversões)';
+}
+
+function renderTable(tab, bks, totals) {
+  const kind = KINDS[tab.kind];
+  const gl = { dia: 'Dia', semana: 'Semana', mes: 'Mês' }[gran];
+  document.getElementById('tbl-head').innerHTML = `<tr><th class="pcol">${gl}</th>${kind.metrics.map(m => `<th>${m.l}</th>`).join('')}</tr>`;
+  const row = (label, t, cls) => `<tr class="${cls || ''}"><td class="pcol">${label}</td>${kind.metrics.map(m => `<td>${m.f(calc(m, t))}</td>`).join('')}</tr>`;
+  document.getElementById('tbl-body').innerHTML =
+    row('Total do período', totals, 'tot-row') +
+    [...bks].reverse().map(b => row(b.label, sumDays(b.days, tab.metrics))).join('');
 }
 
 // ══════════════════════════════════════════
@@ -815,9 +843,18 @@ function renderSidebar() {
   document.getElementById('cl-list').innerHTML = clients.map(c => {
     const d = cdata[c.id], s = !d ? 'ld' : d.error ? 'er' : 'ok';
     const a = (view === 'detail' && activeId === c.id) ? ' ac' : '';
-    return `<div class="ni${a}" onclick="showDetail('${c.id}')" ondblclick="openEdit('${c.id}')"><span>◈</span><span class="ni-label" title="${c.name}">${c.name}</span><span class="ni-dot ${s}"></span></div>`;
+    return `<div class="ni${a}" onclick="showDetail('${c.id}')" ondblclick="openEdit('${c.id}')"><span>◈</span><span class="ni-label" title="${escAttr(c.name)}">${escHtml(c.name)}</span><span class="ni-dot ${s}"></span></div>`;
   }).join('');
   document.getElementById('ni-ov').classList.toggle('ac', view === 'overview');
+}
+
+// últimos 7 dias de dados vs 7 anteriores
+function last7(tab) {
+  const { max } = tabBounds(tab);
+  const from = addDays(max, -6), to = max;
+  const cur = totalsFor(tab, from, to).t;
+  const pr = prevRange(tab, from, to);
+  return { from, to, cur, prev: pr ? totalsFor(tab, pr.from, pr.to).t : null };
 }
 
 function renderOverview() {
@@ -828,11 +865,15 @@ function renderOverview() {
   emp.style.display = 'none';
   grid.innerHTML = clients.map(c => {
     const d = cdata[c.id];
-    if (!d) return `<div class="cl-card"><div class="cl-card-top"><div class="cl-card-name">${c.name}</div><span class="badge b-ld">Carregando</span></div><div style="text-align:center;padding:20px"><span class="sp"></span></div></div>`;
-    if (d.error) return `<div class="cl-card" onclick="openEdit('${c.id}')"><div class="cl-card-top"><div class="cl-card-name">${c.name}</div><span class="badge b-er">Erro</span></div><div style="color:#ff4040;font-size:11px;margin-top:6px">${d.error}</div></div>`;
-    const ch = d.semana?.geral || d.semana?.meta || { rows: [] }, rows = ch.rows || [], last = rows[rows.length - 1], prev = rows.length > 1 ? rows[rows.length - 2] : null;
-    const show = METRICS.filter(m => last?.[`_${m.k}`] != null).slice(0, 6);
-    return `<div class="cl-card" onclick="showDetail('${c.id}')"><div class="cl-card-top"><div><div class="cl-card-name">${c.name}</div><div class="cl-card-sub">${rows.length} sem. · Última: ${last?._week || '—'}</div></div><span class="badge b-ok">✓ Online</span></div><div class="mtr-g">${show.map(m => { const v = last[`_${m.k}`], p = prev?.[`_${m.k}`]; return `<div class="mtr"><div class="mtr-l"><span style="width:5px;height:5px;border-radius:50%;background:${m.col};display:inline-block;flex-shrink:0"></span>${m.l}</div><div class="mtr-v">${m.f(v)}</div><div class="mtr-t">${trnd(v, p, m.lb)}</div></div>`; }).join('')}</div></div>`;
+    const nm = escHtml(c.name);
+    if (!d) return `<div class="cl-card"><div class="cl-card-top"><div class="cl-card-name">${nm}</div><span class="badge b-ld">Carregando</span></div><div style="text-align:center;padding:20px"><span class="sp"></span></div></div>`;
+    if (d.error) return `<div class="cl-card" onclick="openEdit('${c.id}')"><div class="cl-card-top"><div class="cl-card-name">${nm}</div><span class="badge b-er">Erro</span></div><div style="color:#ff4040;font-size:11px;margin-top:6px">${escHtml(d.error)}</div></div>`;
+    const blocks = overviewTabs(d.tabs).map(tab => {
+      const kind = KINDS[tab.kind], l = last7(tab);
+      const ms = kind.overview.map(k => kind.metrics.find(m => m.k === k));
+      return `<div style="margin-top:12px"><div class="cl-card-sub" style="margin:0 0 6px">${kind.label} · ${fDM(l.from)} a ${fDM(l.to)}</div><div class="mtr-g">${ms.map(m => { const v = calc(m, l.cur), p = l.prev ? calc(m, l.prev) : null; return `<div class="mtr"><div class="mtr-l"><span style="width:5px;height:5px;border-radius:50%;background:${m.col};display:inline-block;flex-shrink:0"></span>${m.l}</div><div class="mtr-v">${m.f(v)}</div><div class="mtr-t">${trnd(v, p, m.lb, m.neutral)}</div></div>`; }).join('')}</div></div>`;
+    }).join('');
+    return `<div class="cl-card" onclick="showDetail('${c.id}')"><div class="cl-card-top"><div><div class="cl-card-name">${nm}</div></div><span class="badge b-ok">✓ Online</span></div>${blocks}</div>`;
   }).join('');
 }
 
@@ -841,42 +882,73 @@ function renderDetail(id) {
   document.getElementById('ov-view').classList.remove('show');
   document.getElementById('dv-wrap').classList.add('show');
   document.getElementById('dv-title').textContent = c.name;
-  document.getElementById('mt-sem').classList.toggle('ac', viewMode === 'semana');
-  document.getElementById('mt-men').classList.toggle('ac', viewMode === 'mensal');
-  document.querySelectorAll('.ch-tab').forEach(t => t.classList.toggle('ac', t.dataset.ch === channel));
-  document.getElementById('proj-btn').classList.toggle('ac', showProj);
   updateChatCtx();
-  if (!d) { document.getElementById('chart-box').innerHTML = '<div class="no-data"><span class="sp"></span></div>'; document.getElementById('kpi-row').innerHTML = ''; return; }
-  if (d.error) { document.getElementById('chart-box').innerHTML = `<div class="no-data" style="color:#ff4040">${d.error}</div>`; return; }
-  populateWkSelects();
-  const rows = getActiveRows();
-  const chLabel = { geral: 'Geral · Todos os canais', meta: 'Meta Ads', google: 'Google Ads' };
-  const mLabel  = { semana: 'semanal', mensal: 'mensal' };
-  document.getElementById('chart-ttl').textContent = `Evolução ${mLabel[viewMode]} · ${chLabel[channel]}`;
-  document.getElementById('chart-sub').textContent = `${rows.length} períodos · Última: ${rows[rows.length - 1]?._week || '—'}`;
-  buildPills(rows); renderKPIs(rows); renderTable(rows); scheduleChart();
+  const noData = html => { document.getElementById('chart-box').innerHTML = html; ['kpi-hero', 'kpi-stages', 'funnel', 'tbl-head', 'tbl-body', 'ft-tabs', 'mpills'].forEach(i => document.getElementById(i).innerHTML = ''); document.getElementById('kind-badge').textContent = ''; };
+  if (!d) return noData('<div class="no-data"><span class="sp"></span></div>');
+  if (d.error) return noData(`<div class="no-data" style="color:#ff4040;text-align:center;padding:0 20px">${escHtml(d.error)}</div>`);
+
+  const tab = curTab();
+  if (tabTitle !== tab.title) tabTitle = tab.title;
+  const kind = KINDS[tab.kind];
+  document.getElementById('kind-badge').textContent = kind.label;
+  document.getElementById('ft-tabs').innerHTML = d.tabs.length > 1
+    ? d.tabs.map(t => `<button class="ft-tab${t.title === tab.title ? ' ac' : ''}" data-t="${escAttr(t.title)}" onclick="setTab(this.dataset.t)">${escHtml(t.title)}</button>`).join('') : '';
+
+  // filtro
+  const { min, max } = tabBounds(tab);
+  const { from, to } = currentRange(tab);
+  document.querySelectorAll('#pre-btns .pre-btn').forEach(b => b.classList.toggle('ac', b.dataset.p === preset));
+  document.querySelectorAll('#gran-btns .pre-btn').forEach(b => b.classList.toggle('ac', b.dataset.g === gran));
+  for (const [id, v] of [['d-from', from], ['d-to', to]]) { const el = document.getElementById(id); el.min = min; el.max = max; el.value = v; }
+
+  const cur = totalsFor(tab, from, to);
+  const pr = prevRange(tab, from, to);
+  const prevT = pr ? totalsFor(tab, pr.from, pr.to).t : null;
+  const bks = buckets(cur.days, gran);
+  const nDays = diffDays(from, to) + 1;
+  document.getElementById('f-info').textContent = `${fDMY(from)} → ${fDMY(to)} · ${nDays} dia${nDays > 1 ? 's' : ''} · dados de ${fDMY(min)} a ${fDMY(max)}` + (pr ? ` · variação vs ${fDMY(pr.from)}–${fDMY(pr.to)}` : ' · sem período anterior completo para comparar');
+  document.getElementById('chart-ttl').textContent = `Evolução ${{ dia: 'diária', semana: 'semanal', mes: 'mensal' }[gran]} · ${kind.label}`;
+  document.getElementById('chart-sub').textContent = `${bks.length} ${{ dia: 'dias', semana: 'semanas', mes: 'meses' }[gran]}`;
+  document.getElementById('kpi-note').textContent = 'Taxas e custos (CTR, CPM, CPA, ROAS…) são recalculados sobre o total do período, não a média das taxas diárias. As colunas "Semanal" e "Soma Mês" da planilha não são somadas de novo: o dashboard parte sempre dos dias.';
+
+  buildPills(tab); renderKPIs(tab, cur.t, prevT); renderFunnel(tab, cur.t); renderTable(tab, bks, cur.t); scheduleChart();
 }
 function refreshDetail() { if (activeId && cdata[activeId]) renderDetail(activeId); }
 
 // ══════════════════════════════════════════
-// Navigation
+// Navegação
 // ══════════════════════════════════════════
 function showOverview() { view = 'overview'; activeId = null; render(); }
-function showDetail(id) { const first = activeId !== id; view = 'detail'; activeId = id; if (first) { wkFrom = null; wkTo = null; wkPreset = 0; } renderSidebar(); renderDetail(id); }
-function setChannel(ch, el) { channel = ch; document.querySelectorAll('.ch-tab').forEach(t => t.classList.remove('ac')); el.classList.add('ac'); populateWkSelects(); refreshDetail(); }
-function setViewMode(m) { viewMode = m; document.getElementById('mt-sem').classList.toggle('ac', m === 'semana'); document.getElementById('mt-men').classList.toggle('ac', m === 'mensal'); wkFrom = null; wkTo = null; wkPreset = 0; document.querySelectorAll('.wf-btn').forEach(b => b.classList.toggle('ac', b.textContent === 'Tudo')); populateWkSelects(); refreshDetail(); }
-function toggleProjected(el) { showProj = !showProj; el.classList.toggle('ac', showProj); refreshDetail(); }
+function showDetail(id) {
+  const first = activeId !== id;
+  view = 'detail'; activeId = id;
+  if (first) { tabTitle = null; preset = '30'; rFrom = rTo = null; }
+  renderSidebar(); renderDetail(id);
+  closeSidebar();
+}
 
 // ══════════════════════════════════════════
 // Chat
 // ══════════════════════════════════════════
-const SUGS = [
-  'Como está o CPL nas últimas semanas?',
-  'Qual semana teve melhor ROAS?',
-  'O que pode estar causando queda nos leads?',
-  'Compare investimento vs leads gerados.',
-  'Qual a tendência de faturamento?',
-  'O ROAS está acima ou abaixo do projetado?',
+const SUGS = {
+  ecommerce: [
+    'Como está o ROAS no período e o que mudou?',
+    'Onde está o maior gargalo do funil?',
+    'Quais dias tiveram melhor CPA?',
+    'Compare investimento vs faturamento.',
+  ],
+  b2b: [
+    'Como está o CPL no período?',
+    'Onde estamos perdendo mais no funil?',
+    'Quais dias geraram mais leads?',
+    'O CTR e o Connect Rate estão saudáveis?',
+  ],
+};
+const SUGS_OV = [
+  'Qual cliente tem melhor ROAS?',
+  'Compare o CPL entre os clientes.',
+  'Quem gerou mais leads nos últimos 7 dias?',
+  'Qual cliente está com pior performance?',
 ];
 
 function toggleChat() {
@@ -886,24 +958,27 @@ function toggleChat() {
   if (chatOpen) updateChatCtx();
 }
 
-const SUGS_OV = [
-  'Qual cliente tem melhor ROAS?',
-  'Compare o CPL entre os clientes.',
-  'Quem tem mais leads essa semana?',
-  'Qual cliente está com pior performance?',
-];
-
 function updateChatCtx() {
-  if (!activeId) {
+  const sugs = list => list.map(s => `<div class="sug-chip" onclick="useSug('${s.replace(/'/g, "\\'")}')">${s}</div>`).join('');
+  const tab = curTab();
+  if (!activeId || !tab) {
     document.getElementById('chat-ctx').textContent = `Visão Geral · ${clients.length} clientes`;
-    document.getElementById('chat-sugs').innerHTML = SUGS_OV.slice(0, 4).map(s => `<div class="sug-chip" onclick="useSug('${s.replace(/'/g,"\\'")}')">${s}</div>`).join('');
+    document.getElementById('chat-sugs').innerHTML = sugs(SUGS_OV);
     return;
   }
   const c = clients.find(x => x.id === activeId);
-  const rows = getActiveRows();
-  const chLabel = { geral: 'Geral', meta: 'Meta Ads', google: 'Google Ads' };
-  document.getElementById('chat-ctx').textContent = `${c?.name || '—'} · ${chLabel[channel]} · ${rows.length} períodos`;
-  document.getElementById('chat-sugs').innerHTML = SUGS.slice(0, 4).map(s => `<div class="sug-chip" onclick="useSug('${s.replace(/'/g,"\\'")}')">${s}</div>`).join('');
+  const { from, to } = currentRange(tab);
+  document.getElementById('chat-ctx').textContent = `${c?.name || '—'} · ${tab.title} · ${fDM(from)} a ${fDM(to)}`;
+  document.getElementById('chat-sugs').innerHTML = sugs(SUGS[tab.kind]);
+}
+
+function metricLine(kind, t, p) {
+  return kind.metrics.map(m => {
+    const v = calc(m, t); if (v == null) return null;
+    const pv = p ? calc(m, p) : null;
+    const delta = pv ? ` (${((v - pv) / pv * 100) > 0 ? '+' : ''}${((v - pv) / pv * 100).toFixed(1)}% vs período anterior)` : '';
+    return `${m.l}: ${m.f(v)}${delta}`;
+  }).filter(Boolean);
 }
 
 function fmtForAIOverview() {
@@ -912,100 +987,48 @@ function fmtForAIOverview() {
   for (const c of clients) {
     const d = cdata[c.id];
     if (!d || d.error) { lines.push(`${c.name}: sem dados (${d?.error || 'carregando'})`); continue; }
-    const rows = d.semana?.geral?.rows || [];
-    const last = rows[rows.length - 1], prev = rows.length > 1 ? rows[rows.length - 2] : null;
-    if (!last) { lines.push(`${c.name}: sem dados`); continue; }
-    const avail = METRICS.filter(m => last[`_${m.k}`] != null);
-    const summary = avail.map(m => {
-      const v = last[`_${m.k}`], p = prev?.[`_${m.k}`];
-      const delta = p && p !== 0 ? ` (${((v-p)/p*100).toFixed(1)}%)` : '';
-      return `${m.l}: ${m.f(v)}${delta}`;
-    }).join(' | ');
-    lines.push(`${c.name} (${last._week}): ${summary}`);
+    for (const tab of d.tabs) {
+      const kind = KINDS[tab.kind], l = last7(tab);
+      lines.push(`${c.name} · ${kind.label}${channelOf(tab.title) === 'geral' ? '' : ' · ' + tab.title} (${fDM(l.from)} a ${fDM(l.to)}): ${metricLine(kind, l.cur, l.prev).join(' | ')}`);
+    }
   }
   return lines.join('\n');
 }
 
+function fmtForAI(tab) {
+  const kind = KINDS[tab.kind];
+  const { from, to } = currentRange(tab);
+  const cur = totalsFor(tab, from, to), pr = prevRange(tab, from, to);
+  const prevT = pr ? totalsFor(tab, pr.from, pr.to).t : null;
+  const bks = buckets(cur.days, gran).slice(-31);
+  const header = 'Período | ' + kind.metrics.map(m => m.l).join(' | ');
+  const rows = bks.map(b => { const t = sumDays(b.days, tab.metrics); return [b.label, ...kind.metrics.map(m => m.f(calc(m, t)))].join(' | '); });
+  return [
+    `== TOTAL DO PERÍODO ${fDMY(from)} a ${fDMY(to)} ==`,
+    ...metricLine(kind, cur.t, prevT),
+    '',
+    `== DETALHE POR ${{ dia: 'DIA', semana: 'SEMANA', mes: 'MÊS' }[gran]} (últimos ${rows.length}) ==`,
+    header,
+    ...rows,
+  ].join('\n');
+}
+
 function clearChatHistory() {
-  const key = getChatKey();
-  chatHistory[key] = [];
-  const msgsEl = document.getElementById('chat-msgs');
-  msgsEl.innerHTML = '<div class="chat-empty"><strong>Histórico limpo</strong>Nova conversa iniciada.</div>';
+  chatHistory[getChatKey()] = [];
+  document.getElementById('chat-msgs').innerHTML = '<div class="chat-empty"><strong>Histórico limpo</strong>Nova conversa iniciada.</div>';
 }
 function useSug(text) { document.getElementById('chat-input').value = text; sendChat(); }
 function chatKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } }
 
-function calcDerived(row) {
-  const inv = row._investimento, leads = row._leads, cliques = row._cliques,
-        alcance = row._alcance, vendas = row._vendas, mql = row._mql, sql = row._sql;
-  const derived = [];
-  if (cliques != null && alcance != null && alcance > 0)
-    derived.push(`CTR: ${(cliques / alcance * 100).toFixed(2)}%`);
-  if (inv != null && vendas != null && vendas > 0)
-    derived.push(`CPA: R$ ${(inv / vendas).toFixed(0)}`);
-  if (inv != null && leads != null && leads > 0 && row._cpl == null)
-    derived.push(`CPL calc.: R$ ${(inv / leads).toFixed(0)}`);
-  if (leads != null && vendas != null && leads > 0)
-    derived.push(`Conv. Lead→Venda: ${(vendas / leads * 100).toFixed(1)}%`);
-  if (leads != null && mql != null && leads > 0)
-    derived.push(`Taxa MQL: ${(mql / leads * 100).toFixed(1)}%`);
-  if (mql != null && sql != null && mql > 0)
-    derived.push(`Taxa SQL: ${(sql / mql * 100).toFixed(1)}%`);
-  return derived;
-}
-
-function fmtForAI(rows) {
-  if (!rows.length) return 'Nenhum dado disponível.';
-  const avail = getAvailMetrics(rows);
-  const last = rows[rows.length - 1], prev = rows.length > 1 ? rows[rows.length - 2] : null;
-  const metaKey = viewMode === 'mensal' ? '_metaMen' : '_metaSem';
-  let metaVal = null;
-  for (let i = rows.length - 1; i >= 0; i--) { if (rows[i][metaKey] != null) { metaVal = rows[i][metaKey]; break; } }
-
-  // Raw metrics with delta vs previous
-  const summary = avail.map(m => {
-    const v = last[`_${m.k}`], p = prev?.[`_${m.k}`];
-    if (v == null) return null;
-    const delta = p && p !== 0 ? ((v - p) / p * 100).toFixed(1) + '%' : null;
-    return `${m.l}: ${m.f(v)}${delta ? ` (${Number(delta) > 0 ? '+' : ''}${delta} vs semana anterior)` : ''}`;
-  }).filter(Boolean);
-
-  // Derived metrics for last week
-  const derived = calcDerived(last);
-  const derivedPrev = prev ? calcDerived(prev) : [];
-
-  // Meta
-  const metaLine = metaVal != null ? `Meta ${viewMode === 'mensal' ? 'Mensal' : 'Semanal'} Geral: ${fInt(metaVal)}${last._leads != null ? ` | Leads atingidos: ${((last._leads / metaVal) * 100).toFixed(1)}% da meta` : ''}` : null;
-
-  // History table (last 16 rows)
-  const header = 'Período | ' + avail.map(m => m.l).join(' | ') + (metaVal != null ? ' | Meta' : '');
-  const sample = rows.slice(-16).map(r => {
-    const d = calcDerived(r);
-    const extra = d.length ? ` [${d.join(', ')}]` : '';
-    return [r._week, ...avail.map(m => m.f(r[`_${m.k}`])), ...(metaVal != null ? [fInt(r[metaKey])] : [])].join(' | ') + extra;
-  });
-
-  return [
-    '== ÚLTIMA SEMANA ==',
-    ...summary,
-    ...(derived.length ? ['', 'Métricas calculadas:', ...derived.map(d => `  ${d}`)] : []),
-    ...(metaLine ? ['', metaLine] : []),
-    '',
-    `== HISTÓRICO (${sample.length} períodos) ==`,
-    header,
-    ...sample,
-  ].join('\n');
-}
-
-function getChatKey() { return activeId ? `${activeId}_${channel}_${viewMode}` : 'overview'; }
+function getChatKey() { const t = curTab(); return activeId && t ? `${activeId}_${t.title}` : 'overview'; }
 
 function buildSystemPrompt(ctx) {
   return `Você é um analista sênior de tráfego pago da V4 Company. Suas regras:
 1. USE APENAS os dados fornecidos — nunca invente números
-2. CALCULE e mencione CTR, CPA, taxa de conversão e outras métricas derivadas quando os dados permitirem
-3. COMPARE com períodos anteriores usando o histórico
-4. IDENTIFIQUE tendências, anomalias e gargalos no funil
-5. SEJA ESPECÍFICO: cite os valores exatos dos dados
+2. COMPARE o período com o anterior e olhe a evolução dia a dia
+3. IDENTIFIQUE tendências, anomalias e gargalos no funil (topo → meio → fundo → resultado)
+4. SEJA ESPECÍFICO: cite os valores exatos dos dados e as datas
+5. Connect Rate = Sessões ÷ Cliques (e-commerce) ou Page Views ÷ Cliques (B2B); pode passar de 100% no e-commerce porque sessões incluem outras origens
 6. Responda em português, de forma objetiva. Máximo 280 palavras.
 
 DADOS DISPONÍVEIS:
@@ -1029,37 +1052,23 @@ async function sendChat() {
 
   try {
     let systemContent;
-    if (!activeId) {
-      const ctx = fmtForAIOverview();
-      systemContent = `Você é um analista sênior de tráfego pago da V4 Company. Regras: use apenas os dados fornecidos, calcule CTR/CPA/taxas quando possível, compare clientes entre si, cite números exatos. Máximo 280 palavras.\n\nDADOS CONSOLIDADOS (todos os clientes, última semana):\n${ctx}`;
+    const tab = curTab();
+    if (!activeId || !tab) {
+      systemContent = `Você é um analista sênior de tráfego pago da V4 Company. Regras: use apenas os dados fornecidos, compare clientes entre si, cite números exatos. Máximo 280 palavras.\n\nDADOS CONSOLIDADOS (todos os clientes, últimos 7 dias vs 7 anteriores):\n${fmtForAIOverview()}`;
     } else {
       const c = clients.find(x => x.id === activeId);
-      const rows = getActiveRows();
-      const chLabel = { geral: 'Geral (todos os canais)', meta: 'Meta Ads', google: 'Google Ads' };
-      const ctx = fmtForAI(rows);
-      systemContent = buildSystemPrompt(`Cliente: ${c?.name} | Canal: ${chLabel[channel]} | ${rows.length} períodos (${rows[0]?._week || '?'} → ${rows[rows.length-1]?._week || '?'})\n\n${ctx}`);
+      systemContent = buildSystemPrompt(`Cliente: ${c?.name} | Funil: ${KINDS[tab.kind].label} | Aba: ${tab.title}\n\n${fmtForAI(tab)}`);
     }
-
-    // Build messages: system + last 8 history turns + new question
-    const history = chatHistory[ctxKey].slice(-8);
     const messages = [
       { role: 'system', content: systemContent },
-      ...history,
+      ...chatHistory[ctxKey].slice(-8),
       { role: 'user', content: question },
     ];
-
-    const r = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages }),
-    });
+    const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages }) });
     const data = await r.json();
     const answer = data.response || 'Sem resposta.';
-
-    // Persist to history
     chatHistory[ctxKey].push({ role: 'user', content: question });
     chatHistory[ctxKey].push({ role: 'assistant', content: answer });
-
     document.getElementById(thinkId)?.remove();
     addChatMsg('ai', answer);
   } catch (e) {
@@ -1078,7 +1087,8 @@ function addChatMsg(role, text) {
   msgsEl.innerHTML += `<div class="chat-msg ${role}"><div class="chat-bubble">${escHtml(text)}</div><div class="chat-meta">${role === 'user' ? 'Você' : 'Analista V4'} · ${now}</div></div>`;
   msgsEl.scrollTop = msgsEl.scrollHeight;
 }
-function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
+function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>'); }
+function escAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
 
 // ══════════════════════════════════════════
 // Toast
@@ -1091,25 +1101,29 @@ function toast(msg, dur = 2500) {
 // ══════════════════════════════════════════
 // Modal / CRUD
 // ══════════════════════════════════════════
-function openAdd() { editId = null; document.getElementById('m-title').textContent = 'Adicionar Cliente'; document.getElementById('i-name').value = ''; document.getElementById('i-sheet').value = ''; document.getElementById('m-err').style.display = 'none'; document.getElementById('b-del').style.display = 'none'; document.getElementById('modal-ov').classList.add('show'); setTimeout(() => document.getElementById('i-name').focus(), 50); }
-function openEdit(id) { const c = clients.find(x => x.id === id); if (!c) return; editId = id; document.getElementById('m-title').textContent = 'Editar Cliente'; document.getElementById('i-name').value = c.name; document.getElementById('i-sheet').value = c.sheetId; document.getElementById('m-err').style.display = 'none'; document.getElementById('b-del').style.display = ''; document.getElementById('modal-ov').classList.add('show'); }
+function openAdd() { editId = null; document.getElementById('m-title').textContent = 'Adicionar Cliente'; document.getElementById('i-name').value = ''; document.getElementById('i-sheet').value = ''; document.getElementById('i-model').value = 'ecommerce'; document.getElementById('m-err').style.display = 'none'; document.getElementById('b-del').style.display = 'none'; document.getElementById('modal-ov').classList.add('show'); setTimeout(() => document.getElementById('i-name').focus(), 50); }
+function openEdit(id) { const c = clients.find(x => x.id === id); if (!c) return; editId = id; document.getElementById('m-title').textContent = 'Editar Cliente'; document.getElementById('i-name').value = c.name; document.getElementById('i-sheet').value = c.sheetId; document.getElementById('i-model').value = c.model || 'auto'; document.getElementById('m-err').style.display = 'none'; document.getElementById('b-del').style.display = ''; document.getElementById('modal-ov').classList.add('show'); }
 function closeModal() { document.getElementById('modal-ov').classList.remove('show'); }
 function showErr(m) { const e = document.getElementById('m-err'); e.textContent = m; e.style.display = ''; }
 
+// aceita o ID puro ou a URL inteira da planilha
+function extractSheetId(v) { const m = /\/d\/([a-zA-Z0-9_-]+)/.exec(v); return m ? m[1] : v; }
+
 async function saveClient() {
-  const name = document.getElementById('i-name').value.trim(), sheetId = document.getElementById('i-sheet').value.trim();
+  const name = document.getElementById('i-name').value.trim(), sheetId = extractSheetId(document.getElementById('i-sheet').value.trim()), model = document.getElementById('i-model').value;
   if (!name) return showErr('Digite o nome do cliente.');
   if (!sheetId) return showErr('Cole o ID da planilha.');
   try {
     if (editId) {
-      // Update in Supabase
-      await sbFetch(`/clients?id=eq.${editId}`, { method: 'PATCH', body: JSON.stringify({ name, sheet_id: sheetId }) });
+      await writeClient('PATCH', `/clients?id=eq.${editId}`, name, sheetId, model);
       const c = clients.find(x => x.id === editId);
-      if (c) { c.name = name; c.sheetId = sheetId; delete cdata[editId]; }
+      if (c) { c.name = name; c.sheetId = sheetId; c.model = model; delete cdata[editId]; }
+      saveLocalModel(editId, model);
     } else {
-      const row = await insertClientToSupabase(name, sheetId);
+      const row = await insertClientToSupabase(name, sheetId, model);
       const newId = row?.id || Date.now().toString();
-      clients.push({ id: newId, name, sheetId });
+      clients.push({ id: newId, name, sheetId, model });
+      saveLocalModel(newId, model);
     }
     closeModal();
     render();
@@ -1143,11 +1157,8 @@ document.getElementById('modal-ov').addEventListener('click', e => { if (e.targe
 // ══════════════════════════════════════════
 async function init() {
   render();
-  // Load clients from Supabase (sbUrl/sbKey already set as constants above)
   await loadClientsFromSupabase();
   render();
-
-  // Load data for all clients in parallel
   if (clients.length) {
     await Promise.all(clients.map(loadClient));
     render();

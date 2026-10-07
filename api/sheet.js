@@ -1,8 +1,8 @@
 // /api/sheet.js — Vercel Serverless Function (CommonJS)
-const TABS = [
-  'Acomp_Semana_Geral','Acomp_Semana_Meta','Acomp_Semana_Google',
-  'Acomp_Mensal_Geral','Acomp_Mensal_Meta','Acomp_Mensal_Google',
-];
+// Lê todas as abas "Funil ..." de uma planilha (uma planilha por cliente) e devolve os dias já normalizados.
+const { parseGrid } = require('./_parse');
+
+const MAX_RANGE = 'A1:GZ80'; // ~200 colunas de dias/semanas e 80 linhas de métricas
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -15,21 +15,37 @@ module.exports = async function handler(req, res) {
   const apiKey = process.env.GOOGLE_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'GOOGLE_API_KEY not configured' });
 
-  const results = await Promise.all(
-    TABS.map(async (tab) => {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(tab)}!A1:Z500?key=${apiKey}`;
-      try {
-        const r = await fetch(url);
-        if (!r.ok) return { tab, values: [] };
-        const data = await r.json();
-        return { tab, values: data.values || [] };
-      } catch (e) {
-        return { tab, values: [] };
-      }
-    })
-  );
+  try {
+    // 1) nomes das abas
+    const metaUrl = `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}?fields=properties.title,sheets.properties.title&key=${apiKey}`;
+    const metaRes = await fetch(metaUrl);
+    if (!metaRes.ok) {
+      const msg = metaRes.status === 403 || metaRes.status === 404
+        ? 'Planilha inacessível — confirme o ID e se está como "Qualquer pessoa com o link pode ver".'
+        : `Google Sheets respondeu ${metaRes.status}`;
+      return res.status(502).json({ error: msg });
+    }
+    const meta = await metaRes.json();
+    const titles = (meta.sheets || []).map(s => s.properties.title);
+    if (!titles.length) return res.status(200).json({ spreadsheet: meta.properties?.title || '', tabs: [] });
 
-  const tabs = {};
-  for (const { tab, values } of results) tabs[tab] = values;
-  res.status(200).json({ tabs });
+    // 2) valores de todas as abas numa chamada só
+    const ranges = titles.map(t => `ranges=${encodeURIComponent(`'${t.replace(/'/g, "''")}'!${MAX_RANGE}`)}`).join('&');
+    const valUrl = `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(sheetId)}/values:batchGet?${ranges}&valueRenderOption=FORMATTED_VALUE&key=${apiKey}`;
+    const valRes = await fetch(valUrl);
+    if (!valRes.ok) return res.status(502).json({ error: `Google Sheets respondeu ${valRes.status}` });
+    const valData = await valRes.json();
+
+    // 3) cada aba que tiver o layout de funil diário vira uma entrada; as demais são ignoradas
+    const tabs = [];
+    (valData.valueRanges || []).forEach((vr, i) => {
+      const parsed = parseGrid(titles[i], vr.values || []);
+      if (parsed) tabs.push(parsed);
+    });
+
+    res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    return res.status(200).json({ spreadsheet: meta.properties?.title || '', tabs });
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
 };

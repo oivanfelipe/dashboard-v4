@@ -79,6 +79,7 @@ git push -u origin main
 | `SUPABASE_ANON_KEY` | anon key do Supabase |
 | `GOOGLE_API_KEY` | chave da Google Sheets API |
 | `GROQ_API_KEY` | chave da Groq |
+| `GROQ_MODEL` | (opcional) modelo do chat; padrão `openai/gpt-oss-120b` |
 
 4. Clique **Deploy** → aguarde ~1 minuto
 
@@ -110,7 +111,7 @@ Modelo: planilha "Touch of Synergy - Funil Diário". Cada aba é um funil:
 - Abra a URL e clique **+ Adicionar Cliente**; informe o nome, o link (ou ID) da planilha e o **modelo** (E-commerce B2C, Inside Sales B2B ou os dois). O modelo define quais abas aparecem
 - Os clientes ficam salvos no Supabase — qualquer pessoa com o link verá os mesmos
 - Tela do cliente: escolha o funil (abas), o **período** (atalhos ou De/Até) e o agrupamento (dia, semana, mês). KPIs, funil, gráfico de linhas (você escolhe os KPIs) e tabela seguem o período; as variações comparam com o período anterior de mesmo tamanho
-- O chat com IA usa o Groq (llama-3.3-70b) com contexto do período selecionado
+- O chat com IA usa o Groq (`openai/gpt-oss-120b`, ajustável pela variável `GROQ_MODEL`) com o contexto do período selecionado. As regras de análise de ads (diagnóstico de funil B2C/B2B, boas práticas Meta/Google, formato da resposta) ficam em `api/_playbook.js`: edite esse arquivo para ajustar o jeito que o analista responde
 
 ## Testes
 

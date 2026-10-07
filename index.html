@@ -1022,17 +1022,10 @@ function chatKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefau
 
 function getChatKey() { const t = curTab(); return activeId && t ? `${activeId}_${t.title}` : 'overview'; }
 
+// O playbook de ads (regras, diagnóstico de funil, formato) é injetado no servidor, em api/_playbook.js.
+// Aqui vai só o contexto de dados do que o usuário está vendo.
 function buildSystemPrompt(ctx) {
-  return `Você é um analista sênior de tráfego pago da V4 Company. Suas regras:
-1. USE APENAS os dados fornecidos — nunca invente números
-2. COMPARE o período com o anterior e olhe a evolução dia a dia
-3. IDENTIFIQUE tendências, anomalias e gargalos no funil (topo → meio → fundo → resultado)
-4. SEJA ESPECÍFICO: cite os valores exatos dos dados e as datas
-5. Connect Rate = Sessões ÷ Cliques (e-commerce) ou Page Views ÷ Cliques (B2B); pode passar de 100% no e-commerce porque sessões incluem outras origens
-6. Responda em português, de forma objetiva. Máximo 280 palavras.
-
-DADOS DISPONÍVEIS:
-${ctx}`;
+  return `DADOS DISPONÍVEIS (use só estes números):\n${ctx}`;
 }
 
 async function sendChat() {
@@ -1054,7 +1047,7 @@ async function sendChat() {
     let systemContent;
     const tab = curTab();
     if (!activeId || !tab) {
-      systemContent = `Você é um analista sênior de tráfego pago da V4 Company. Regras: use apenas os dados fornecidos, compare clientes entre si, cite números exatos. Máximo 280 palavras.\n\nDADOS CONSOLIDADOS (todos os clientes, últimos 7 dias vs 7 anteriores):\n${fmtForAIOverview()}`;
+      systemContent = `CONTEXTO: visão geral da carteira — compare os clientes entre si e aponte quem precisa de atenção primeiro.\nDADOS CONSOLIDADOS (todos os clientes, últimos 7 dias vs 7 anteriores):\n${fmtForAIOverview()}`;
     } else {
       const c = clients.find(x => x.id === activeId);
       systemContent = buildSystemPrompt(`Cliente: ${c?.name} | Funil: ${KINDS[tab.kind].label} | Aba: ${tab.title}\n\n${fmtForAI(tab)}`);

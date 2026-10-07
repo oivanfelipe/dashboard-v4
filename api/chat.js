@@ -1,5 +1,7 @@
 // /api/chat.js — Vercel Serverless Function (CommonJS)
-// Proxies multi-turn chat to Groq (llama-3.3-70b-versatile).
+// Proxies multi-turn chat to Groq (default openai/gpt-oss-120b; override with GROQ_MODEL), prepending the ads playbook.
+const PLAYBOOK = require('./_playbook');
+
 // Accepts: { messages: [{role, content}] } OR legacy { prompt: string }
 
 module.exports = async function handler(req, res) {
@@ -24,6 +26,9 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'messages or prompt required' });
   }
 
+  // playbook de ads primeiro; os dados do cliente seguem na mensagem de sistema enviada pelo front
+  msgs = [{ role: 'system', content: PLAYBOOK }, ...msgs.filter(m => m && m.role && typeof m.content === 'string')];
+
   try {
     const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -32,10 +37,11 @@ module.exports = async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model: process.env.GROQ_MODEL || 'openai/gpt-oss-120b',
         messages: msgs,
-        max_tokens: 600,
+        max_tokens: 2500,          // folga: modelos de raciocínio gastam tokens pensando antes de responder
         temperature: 0.2,
+        reasoning_effort: 'low',
       }),
     });
 
